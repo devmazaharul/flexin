@@ -1,0 +1,116 @@
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+// Prisma schema for User model
+model User {
+  id        String   @id @default(cuid()) 
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  orders    Order[]  
+  isVerified   Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+enum Role {
+  ADMIN
+  USER
+}
+
+// Prisma schema for Product model
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  price       Float
+  stock       Int
+  imageUrl    String 
+  categoryId  String
+  category    Category @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]  
+  isActive Boolean @default(true)
+  isFeatured Boolean @default(false)
+  discount   Float @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+// Prisma schema for Category model
+model Category {
+  id       String    @id @default(uuid())
+  name     String
+  products Product[]
+}
+
+
+
+//prisma schema for Order model
+model Order {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  total     Float
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  OrderItems OrderItem[]
+  Payments Payment?
+}
+
+enum OrderStatus {
+  PENDING
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+
+//  Prisma schema for OrderItem model
+model OrderItem {
+  id         String   @id @default(uuid())
+  quantity   Int
+  price      Float
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id])
+  productId  String
+  product    Product  @relation(fields: [productId], references: [id])
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}
+
+
+// Prisma schema for Payment model
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  FAILED
+  CANCELLED
+}
+enum PaymentMethod {
+  CASH_ON_DELIVERY
+  BKASH
+  NAGAD
+  MAZAPAY
+}
+
+model Payment {
+  id             String        @id @default(uuid())
+  orderId        String     @unique
+  amount         Float
+  paymentMethod  PaymentMethod @default(CASH_ON_DELIVERY)
+  status         PaymentStatus @default(PENDING)
+  transactionId  String @unique
+  order          Order         @relation(fields: [orderId], references: [id])
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+}
