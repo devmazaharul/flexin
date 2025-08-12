@@ -1,3 +1,4 @@
+import { appConfig } from '@/constant/app.config';
 import { addToCartitems } from '@/types/product';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
@@ -41,7 +42,7 @@ export const useCartStore = create<CartState>()(
         set({
           cart: get().cart.map((item) =>
             item.id === id
-              ? { ...item, quantity: Math.min(50, item.quantity + 1) }
+              ? { ...item, quantity: Math.min(appConfig.cartLimit.MAX, item.quantity + 1) }
               : item
           ),
         }),
@@ -50,7 +51,7 @@ export const useCartStore = create<CartState>()(
         set({
           cart: get().cart.map((item) =>
             item.id === id
-              ? { ...item, quantity: Math.max(1, item.quantity - 1) } // 👈 never go below 1
+              ? { ...item, quantity: Math.max(appConfig.cartLimit.MIN, item.quantity - 1) } // 👈 never go below 1
               : item
           ),
         }),

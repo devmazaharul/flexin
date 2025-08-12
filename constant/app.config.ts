@@ -31,5 +31,9 @@ export const appConfig = Object.freeze({
   },
   hashing:{
     SALT_ROUNDS: 10,
+  },
+  cartLimit:{
+    MIN:1,
+    MAX:50
   }
 });
