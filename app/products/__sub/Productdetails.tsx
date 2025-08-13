@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { appConfig } from '@/constant/app.config';
 import { useCartStore } from '@/hook/persist';
 import { productItems } from '@/types/product';
+import QRCode from 'react-qr-code';
 import {
   Heart,
   Minus,
@@ -12,6 +13,7 @@ import {
   Ruler,
   ShoppingBasket,
   Star,
+  Truck,
 } from 'lucide-react';
 import Image from 'next/image';
 import React, { useState, useEffect, useMemo } from 'react';
@@ -365,8 +367,13 @@ export default function Productdetails({ product }: { product: productItems }) {
           </div>
 
           {/* Footer meta */}
-          <div className="mt-2 text-xs text-gray-500">
-            Delivery in 2–5 days • Cash on Delivery available
+          <div className="mt-2 text-xs text-gray-600 flex items-center gap-1">
+            <Truck size={16} /> Delivery in 2–5 days • Cash on Delivery
+            available
+          </div>
+
+          <div>
+            <QRCode size={80} value={`${appConfig.hostname.BASE_URL}/products/${product.slug}`} viewBox={`0 0 256 256`} /> <span className='text-xs'>Scan now</span>
           </div>
         </div>
       </div>
