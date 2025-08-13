@@ -126,11 +126,11 @@ export default function CartsMenu() {
                 <div className="text-sm text-gray-500">Your cart is empty.</div>
               ) : (
                 <ul className="space-y-2 max-h-48 overflow-auto">
-                  {cartStore.cart.map((it: any) => (
+                  {cartStore.cart.map((it) => (
                     <li key={it.id} className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-md bg-gray-100 overflow-hidden flex-shrink-0">
                         {it.imageUrl ? (
-                          <img src={it.imageUrl} alt={it.name} className="w-full h-full object-cover" />
+                          <Image src={it.imageUrl} alt={it.name} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full bg-gray-200" />
                         )}
@@ -152,7 +152,7 @@ export default function CartsMenu() {
 
             <div className="mt-3 flex items-center justify-between">
               <div className="text-sm font-semibold text-gray-800">
-                Total: €{cartStore.cart.reduce((s: number, i: any) => s + (i.price || 0) * (i.quantity || 1), 0).toFixed(0)}
+                Total: €{cartStore.cart.reduce((s: number, i) => s + (i.price || 0) * (i.quantity || 1), 0).toFixed(0)}
               </div>
               <div className="flex items-center gap-2">
                 <button

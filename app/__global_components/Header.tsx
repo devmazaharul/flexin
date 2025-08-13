@@ -4,7 +4,7 @@ import React from 'react';
 import SearchMenu from './Search';
 import CartsMenu from './CartsMenu';
 
-export default function () {
+export default function Header() {
   return (
     <div className="flex items-center justify-between h-15">
       <div>

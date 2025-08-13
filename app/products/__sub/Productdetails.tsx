@@ -30,8 +30,7 @@ export default function Productdetails({ product }: { product: productItems }) {
     discount,
     imageUrl,
     category,
-    attributes,
-    slug
+    attributes
   } = product;
   const wishStore=useWishStore()
   const cartStore = useCartStore();
@@ -49,7 +48,7 @@ export default function Productdetails({ product }: { product: productItems }) {
   // ---- Local UI state
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
-  const [qty, setQty] = useState<number>(1);
+  const [qty] = useState<number>(1);
 
   // Default select first color/size on mount
   useEffect(() => {
