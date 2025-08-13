@@ -9,7 +9,7 @@ export interface productItems {
   updatedAt: Date;
   isFeatured: boolean;
   isActive: boolean;
-  slug?:string;
+  slug:string;
   category: {
     id: string;
     name: string;
@@ -48,7 +48,7 @@ export interface addToCartitems {
     id: string;
     name: string;
   };
-  size:string,
+  size?:string,
   color?:string
 
 }

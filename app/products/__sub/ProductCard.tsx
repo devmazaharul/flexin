@@ -45,7 +45,7 @@ export default function ProductCard({
   return (
     <div
       key={id}
-      className="bg-white rounded-2xl overflow-hidden shadow-2xl shadow-[#e8eaed] hover:shadow-2xl transition-shadow duration-300 border border-gray-200/20"
+      className="bg-white rounded-2xl overflow-hidden shadow-2xl shadow-[#e8eaed] hover:shadow-2xl transition-shadow duration-300 border border-gray-300/20"
     >
       <Link
         href={`/products/${encodeURIComponent(slug || 'd')}`}
