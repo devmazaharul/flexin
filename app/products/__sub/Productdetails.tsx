@@ -288,7 +288,7 @@ export default function Productdetails({ product }: { product: productItems }) {
           {/* Actions */}
           <div className="mt-2 space-y-3">
             {/* Quantity (only when not already in cart) */}
-            {!isAlreadyInCart && isAvailable && (
+            {/* {!isAlreadyInCart && isAvailable && (
               <div className="flex items-center gap-2 w-fit">
                 <Button
                   variant="secondary"
@@ -308,7 +308,7 @@ export default function Productdetails({ product }: { product: productItems }) {
                   <Plus className="w-4 h-4" />
                 </Button>
               </div>
-            )}
+            )} */}
 
             {/* Add / Wishlist or Cart controls */}
             {isAlreadyInCart ? (
