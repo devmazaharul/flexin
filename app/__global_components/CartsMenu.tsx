@@ -1,39 +1,29 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import {  Heart, User, X, LogOut, Settings, ShoppingBag } from 'lucide-react';
+import { Heart, User, X, LogOut, Settings, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '@/hook/persist'; // তোমার existing hook
 import { toast } from 'sonner';
 import Image from 'next/image';
+import useWishStore from '@/hook/useWishStore';
 
 /**
- * CartFavUser
- * - Shows Cart, Wishlist, and User icons side-by-side.
- * - Cart count from useCartStore()
- * - Wishlist persisted in localStorage (simple example)
- * - Accessible dropdowns (keyboard + click), click-outside closes
- * - Responsive + small animations
+ * CartsMenu (updated)
+ * - Same look & feel as your original
+ * - Wishlist now comes from Zustand `useWishStore`
+ * - Uses store methods: remove, clear, wishlist array
  */
 
 export default function CartsMenu() {
   const cartStore = useCartStore();
   const cartCount = cartStore.cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
 
-  // Wishlist state persisted in localStorage (simple demo)
-  const [wishlist, setWishlist] = useState<string[]>([]);
-  useEffect(() => {
-    try {
-      const raw = typeof window !== 'undefined' ? localStorage.getItem('flexin_wishlist') : null;
-      setWishlist(raw ? JSON.parse(raw) : []);
-    } catch {
-      setWishlist([]);
-    }
-  }, []);
-  useEffect(() => {
-    try {
-      localStorage.setItem('flexin_wishlist', JSON.stringify(wishlist));
-    } catch {}
-  }, [wishlist]);
+  // ----- WISHLIST from Zustand -----
+  const wishlist = useWishStore((s) => s.wishlist);
+  const removeFromWish = useWishStore((s) => s.remove);
+  const clearWish = useWishStore((s) => s.clear);
+  // optional selector for count
+  const wishCount = wishlist.length;
 
   // dropdown states
   const [openCart, setOpenCart] = useState(false);
@@ -69,20 +59,21 @@ export default function CartsMenu() {
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // sample functions
+  // sample functions (now using zustand)
   const handleRemoveFromWishlist = (id: string) => {
-    setWishlist((s) => s.filter((x) => x !== id));
+    removeFromWish(id);
     toast.success('Removed from wishlist');
   };
 
   const handleClearWishlist = () => {
-    setWishlist([]);
+    clearWish();
     toast.success('Wishlist cleared');
   };
 
   const fakeUser = {
     name: 'Mazaharul Islam',
-    avatar: 'https://newmazaharul.vercel.app/_next/image?url=https%3A%2F%2Famimazaharul.vercel.app%2F_next%2Fimage%3Furl%3D%252Fmaza-original_processed1.jpg%26w%3D640%26q%3D75&w=256&q=75', // replace or keep
+    avatar:
+      'https://newmazaharul.vercel.app/_next/image?url=https%3A%2F%2Famimazaharul.vercel.app%2F_next%2Fimage%3Furl%3D%252Fmaza-original_processed1.jpg%26w%3D640%26q%3D75&w=256&q=75',
     email: 'you@flexin.com',
   };
 
@@ -91,7 +82,7 @@ export default function CartsMenu() {
       {/* === CART ICON & DROPDOWN === */}
       <div className="relative" ref={cartRef}>
         <button
-          className="relative p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+          className="relative cursor-pointer p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
           aria-haspopup="dialog"
           aria-expanded={openCart}
           onClick={() => {
@@ -104,7 +95,7 @@ export default function CartsMenu() {
           }}
           title="Cart"
         >
-          <ShoppingBag  className="w-5 h-5 text-gray-700" />
+          <ShoppingBag className="w-5 h-5 text-gray-700" />
           {cartCount > 0 && (
             <span className="absolute -top-1 -right-1 min-w-[18px] px-1 text-[11px] font-semibold rounded-full bg-rose-500 text-white flex items-center justify-center">
               {cartCount}
@@ -122,7 +113,7 @@ export default function CartsMenu() {
             <div className="flex items-center justify-between">
               <h4 className="font-medium text-gray-800">Cart</h4>
               <button
-                className="p-1 rounded-md hover:bg-gray-100"
+                className="p-1 rounded-md hover:bg-gray-100 cursor-pointer"
                 onClick={() => setOpenCart(false)}
                 aria-label="Close"
               >
@@ -138,10 +129,7 @@ export default function CartsMenu() {
                   {cartStore.cart.map((it: any) => (
                     <li key={it.id} className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-md bg-gray-100 overflow-hidden flex-shrink-0">
-                        {/* if you store image url */}
                         {it.imageUrl ? (
-                          // next/image might need domains; use img fallback if not configured
-                          // <Image src={it.imageUrl} alt={it.name} width={48} height={48} />
                           <img src={it.imageUrl} alt={it.name} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full bg-gray-200" />
@@ -168,7 +156,7 @@ export default function CartsMenu() {
               </div>
               <div className="flex items-center gap-2">
                 <button
-                  className="text-xs px-2 py-1 rounded-md hover:bg-gray-100"
+                  className="text-xs px-2 py-1 rounded-md hover:bg-gray-100 cursor-pointer"
                   onClick={() => {
                     toast('Go to cart (implement route)');
                     setOpenCart(false);
@@ -177,7 +165,7 @@ export default function CartsMenu() {
                   View
                 </button>
                 <button
-                  className="text-xs bg-rose-500 text-white px-3 py-1 rounded-md hover:opacity-95"
+                  className="text-xs bg-rose-500 text-white px-3 py-1 rounded-md hover:opacity-95 cursor-pointer"
                   onClick={() => {
                     toast('Checkout flow (implement)');
                     setOpenCart(false);
@@ -191,10 +179,10 @@ export default function CartsMenu() {
         )}
       </div>
 
-      {/* === WISHLIST ICON & DROPDOWN === */}
+      {/* === WISHLIST ICON & DROPDOWN (Zustand) === */}
       <div className="relative hidden md:block" ref={wishRef}>
         <button
-          className="relative p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+          className="relative p-2 cursor-pointer rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
           aria-haspopup="menu"
           aria-expanded={openWish}
           onClick={() => {
@@ -207,10 +195,10 @@ export default function CartsMenu() {
           }}
           title="Wishlist"
         >
-          <Heart className={`w-5 h-5 ${wishlist.length ? 'text-rose-500' : 'text-gray-700'}`} />
-          {wishlist.length > 0 && (
+          <Heart className={`w-5 h-5 ${wishCount ? 'text-rose-500' : 'text-gray-700'}`} />
+          {wishCount > 0 && (
             <span className="absolute -top-1 -right-1 min-w-[18px] px-1 text-[11px] font-semibold rounded-full bg-rose-500 text-white flex items-center justify-center">
-              {wishlist.length}
+              {wishCount}
             </span>
           )}
         </button>
@@ -220,7 +208,7 @@ export default function CartsMenu() {
             <div className="flex items-center justify-between">
               <h4 className="font-medium text-gray-800">Wishlist</h4>
               <button
-                className="p-1 rounded-md hover:bg-gray-100"
+                className="p-1 rounded-md hover:bg-gray-100 cursor-pointer"
                 onClick={() => setOpenWish(false)}
                 aria-label="Close"
               >
@@ -233,14 +221,14 @@ export default function CartsMenu() {
                 <div className="text-sm text-gray-500">No items saved yet.</div>
               ) : (
                 <ul className="space-y-2 max-h-48 overflow-auto">
-                  {wishlist.map((id) => (
-                    <li key={id} className="flex items-center justify-between">
-                      <div className="text-sm text-gray-800">{id}</div>
+                  {wishlist.map((item) => (
+                    <li key={item.id ?? item} className="flex items-center justify-between">
+                      <div className="text-sm text-gray-800">{item.name}</div>
                       <div className="flex items-center gap-2">
                         <button
-                          className="text-xs text-rose-600 hover:underline"
+                          className="text-xs text-rose-600 hover:underline cursor-pointer"
                           onClick={() => {
-                            handleRemoveFromWishlist(id);
+                            handleRemoveFromWishlist(item.id ?? item);
                           }}
                         >
                           Remove
@@ -254,7 +242,7 @@ export default function CartsMenu() {
 
             <div className="mt-3 flex justify-between items-center">
               <button
-                className="text-xs text-gray-600 hover:underline"
+                className="text-xs text-gray-600 hover:underline cursor-pointer"
                 onClick={() => {
                   toast('Go to wishlist (implement)');
                   setOpenWish(false);
@@ -263,7 +251,7 @@ export default function CartsMenu() {
                 View all
               </button>
               <button
-                className="text-xs text-rose-500"
+                className="text-xs text-rose-500 cursor-pointer"
                 onClick={() => handleClearWishlist()}
                 disabled={wishlist.length === 0}
               >
@@ -277,7 +265,7 @@ export default function CartsMenu() {
       {/* === USER ICON & DROPDOWN === */}
       <div className="relative" ref={userRef}>
         <button
-          className="p-1 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+          className="p-1 rounded-full cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
           aria-haspopup="menu"
           aria-expanded={openUser}
           onClick={() => {
@@ -291,7 +279,7 @@ export default function CartsMenu() {
           title="Account"
         >
           {/* small avatar */}
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-gray-200">
+          <div className="w-8 h-8 rounded-full overflow-hidden bg-purple-400">
             <Image src={fakeUser.avatar} alt={fakeUser.name} width={32} height={32} className="object-cover" />
           </div>
         </button>
@@ -299,7 +287,7 @@ export default function CartsMenu() {
         {openUser && (
           <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-100 shadow-lg rounded-lg p-3 z-50 animate-slideDown">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-gray-200">
+              <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-400">
                 <Image src={fakeUser.avatar} alt={fakeUser.name} width={40} height={40} className="object-cover" />
               </div>
               <div>
@@ -310,7 +298,7 @@ export default function CartsMenu() {
 
             <div className="mt-3 grid gap-2">
               <button
-                className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
+                className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
                 onClick={() => {
                   toast('Go to profile (implement)');
                   setOpenUser(false);
@@ -321,7 +309,7 @@ export default function CartsMenu() {
               </button>
 
               <button
-                className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
+                className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
                 onClick={() => {
                   toast('Go to settings (implement)');
                   setOpenUser(false);
@@ -332,7 +320,7 @@ export default function CartsMenu() {
               </button>
 
               <button
-                className="flex items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm text-rose-600"
+                className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm text-rose-600"
                 onClick={() => {
                   toast('Logged out (implement)');
                   setOpenUser(false);

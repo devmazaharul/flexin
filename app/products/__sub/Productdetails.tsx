@@ -18,6 +18,7 @@ import {
 import Image from 'next/image';
 import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
+import useWishStore from '@/hook/useWishStore';
 
 export default function Productdetails({ product }: { product: productItems }) {
   const {
@@ -30,11 +31,12 @@ export default function Productdetails({ product }: { product: productItems }) {
     imageUrl,
     category,
     attributes,
+    slug
   } = product;
-
+  const wishStore=useWishStore()
   const cartStore = useCartStore();
   const isAlreadyInCart = cartStore.cart.find((item) => item.id === id);
-
+  const isAlreadyInWish=wishStore.wishlist.find((item)=>item.id==id)
   // ---- Derived values
   const discountedPrice = useMemo(
     () => price - (price * discount) / 100,
@@ -48,7 +50,6 @@ export default function Productdetails({ product }: { product: productItems }) {
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [qty, setQty] = useState<number>(1);
-  const [wish, setWish] = useState(false);
 
   // Default select first color/size on mount
   useEffect(() => {
@@ -89,12 +90,7 @@ export default function Productdetails({ product }: { product: productItems }) {
 
   const handleDecrementCart = () => cartStore.decrement(id);
 
-  const handleQtyMinus = () =>
-    setQty((n) => Math.max(appConfig.cartLimit.MIN, n - 1));
-  const handleQtyPlus = () =>
-    setQty((n) =>
-      Math.min(stock, Math.min(appConfig.cartLimit.MAX || stock, n + 1))
-    );
+
 
   return (
     <div className="container mx-auto p-4 md:p-8">
@@ -289,29 +285,6 @@ export default function Productdetails({ product }: { product: productItems }) {
 
           {/* Actions */}
           <div className="mt-2 space-y-3">
-            {/* Quantity (only when not already in cart) */}
-            {/* {!isAlreadyInCart && isAvailable && (
-              <div className="flex items-center gap-2 w-fit">
-                <Button
-                  variant="secondary"
-                  className="hover:bg-gray-200 cursor-pointer"
-                  onClick={handleQtyMinus}
-                  disabled={qty <= (appConfig.cartLimit.MIN || 1)}
-                >
-                  <Minus className="w-4 h-4" />
-                </Button>
-                <span className="w-10 text-center font-semibold">{qty}</span>
-                <Button
-                  variant="secondary"
-                  className="hover:bg-gray-200 cursor-pointer"
-                  onClick={handleQtyPlus}
-                  disabled={qty >= stock}
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-              </div>
-            )} */}
-
             {/* Add / Wishlist or Cart controls */}
             {isAlreadyInCart ? (
               <div className="flex items-center gap-2">
@@ -349,15 +322,14 @@ export default function Productdetails({ product }: { product: productItems }) {
                   {variantMissing ? 'Select options' : 'Add to Cart'}
                 </Button>
                 <Button
-                  onClick={() => setWish((w) => !w)}
+                  onClick={()=>wishStore.toggle(product)}
                   variant="outline"
-                  aria-pressed={wish}
                   className="flex items-center col-span-1 justify-center cursor-pointer"
-                  title={wish ? 'Remove from wishlist' : 'Save to wishlist'}
+                  title={isAlreadyInWish ? 'Remove from wishlist' : 'Save to wishlist'}
                 >
                   <Heart
                     className={`${
-                      wish ? 'fill-red-500 stroke-red-500' : ''
+                      isAlreadyInWish ? 'fill-red-500 stroke-red-500' : ''
                     } stroke-1`}
                     size={22}
                   />

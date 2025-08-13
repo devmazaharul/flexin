@@ -18,6 +18,7 @@ export default function ProductCard({
     productInfo;
 
   const addtocartAction = useCartStore();
+
   const isAlreadyinCart = addtocartAction.cart.find((item) => item.id == id);
 
   const handleAddtoCart = () => {
