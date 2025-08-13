@@ -11,7 +11,7 @@ export const appConfig = Object.freeze({
     ADDRESS_MIN_LENGTH: 10,
   },
   hostname: {
-    BASE_URL: process.env.BASE_URL || 'http://localhost:3000',
+    BASE_URL: process.env.BASE_URL || 'https://flexin.mazaharul.site',
   },
   product: {
     NAME_MIN_LENGTH: 2,
