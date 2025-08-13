@@ -1,5 +1,6 @@
 import { appConfig } from '@/constant/app.config';
 import { addToCartitems } from '@/types/product';
+import { toast } from 'sonner';
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 
@@ -38,14 +39,22 @@ export const useCartStore = create<CartState>()(
       },
 
       clearCart: () => set({ cart: [] }),
-      increment: (id) =>
-        set({
-          cart: get().cart.map((item) =>
-            item.id === id
-              ? { ...item, quantity: Math.min(appConfig.cartLimit.MAX, item.quantity + 1) }
-              : item
-          ),
-        }),
+   increment: (id) =>
+  set({
+    cart: get().cart.map((item) => {
+      if (item.id !== id) return item; 
+      
+      if (item.quantity >= appConfig.cartLimit.MAX) {
+        toast.error(`You can’t add more than ${appConfig.cartLimit.MAX} of this item`);
+        return item;
+      }
+
+      return {
+        ...item,
+        quantity: item.quantity + 1,
+      };
+    }),
+  }),
 
       decrement: (id) =>
         set({

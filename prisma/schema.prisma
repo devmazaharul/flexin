@@ -27,28 +27,36 @@ enum Role {
   USER
 }
 
-// Prisma schema for Product model
 model Product {
-  id          String   @id @default(uuid())
+  id          String           @id @default(uuid())
   name        String
   description String
   price       Float
   stock       Int
-  imageUrl    String 
+  imageUrl    String
   categoryId  String
-  category    Category @relation(fields: [categoryId], references: [id])
-  orderItems  OrderItem[]  
-  isActive Boolean @default(true)
-  isFeatured Boolean @default(false)
-  discount   Float @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  category    Category         @relation(fields: [categoryId], references: [id])
+  orderItems  OrderItem[]
+  attributes  ProductAttribute[]
+  isActive    Boolean          @default(true)
+  isFeatured  Boolean          @default(false)
+  discount    Float            @default(0)
+  createdAt   DateTime         @default(now())
+  updatedAt   DateTime         @updatedAt
 }
-// Prisma schema for Category model
+
 model Category {
   id       String    @id @default(uuid())
   name     String
   products Product[]
+}
+
+model ProductAttribute {
+  id        String   @id @default(uuid())
+  key       String   // e.g. "color", "size", "volume", "skinType"
+  value     String   // e.g. "blue", "XL", "200ml", "oily"
+  productId String
+  product   Product  @relation(fields: [productId], references: [id])
 }
 
 

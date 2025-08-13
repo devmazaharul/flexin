@@ -18,6 +18,7 @@ export const productResponceDB = {
   updatedAt: true,
   isFeatured: true,
   isActive: true,
+  attributes:true,
   category: {
     select: {
       id: true,

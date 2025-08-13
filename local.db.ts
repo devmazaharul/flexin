@@ -1,4 +1,4 @@
-export const products = [
+ const rawProductproducts = [
   {
     id: '1',
     name: 'Iphone 12 Pro Max',
@@ -104,3 +104,17 @@ export const products = [
     },
   },
 ];
+
+export const products=[...rawProductproducts].map((item)=>{
+  return {
+    ...item,
+    slug:item.name.split(" ").join("-").toLocaleLowerCase(),
+    attributes: Math.floor(Math.random()*20)%2==0 ? [
+        { id: 1, key: 'color', value: 'red' },
+        { id: 2, key: 'color', value: 'purple' },
+        { id: 3, key: 'color', value: 'orange' },
+        { id: 4, key: 'size', value: 'xl' },
+        { id: 5, key: 'size', value: '2xl' },
+      ]:[]
+  }
+})

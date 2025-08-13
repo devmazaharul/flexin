@@ -31,7 +31,7 @@ const allProduct = async (
       select: productResponceDB,
     });
 
-    return SuccessResponse<productItems[]>({
+    return SuccessResponse<any>({
       message: 'All filtered products',
       status: 200,
       data: products,
@@ -59,7 +59,7 @@ const singleProduct = async (
         message: 'Invalid product id',
       });
 
-    return SuccessResponse<productItems>({
+    return SuccessResponse<any>({
       message: 'Get product success',
       status: 200,
       data: findSingleProduct,
@@ -93,7 +93,7 @@ const craereProduct = async (
         message: 'invalid add product',
       });
 
-    return SuccessResponse<productItems>({
+    return SuccessResponse<any>({
       message: 'Add product successfull',
       status: 200,
       data: addProduct,
