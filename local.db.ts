@@ -1,120 +1,70 @@
- const rawProductproducts = [
-  {
-    id: '1',
-    name: 'Iphone 12 Pro Max',
-    price: 17883,
-    stock: 120,
-    description: 'This is an awesome phone with great performance.',
-    imageUrl: 'https://m.media-amazon.com/images/I/715XNT3XEpL._SL1500_.jpg',
-    discount: 0,
-    isFeatured: true,
-    isActive: false,
-    category: {
-      id: '6',
-      name: 'baby',
-    },
-    updatedAt: new Date(),
-  },
-  {
-    id: '2',
-    name: 'Samsung Galaxy S23 Ultra',
-    price: 21000,
-    stock: 85,
-    description: 'Flagship Android phone with amazing camera quality.',
-    imageUrl:
-      'https://beautysiaa.com/wp-content/uploads/2022/12/Cosrx-Salicylic-Acid-Daily-Gentle-Cleanser-150ml-300x300.jpg',
-
-    discount: 15,
-    isFeatured: true,
-    isActive: false,
-    category: {
-      id: '5',
-      name: 'electronics',
-    },
-    updatedAt: new Date(),
-  },
-  {
-    id: '3',
-    name: 'Sony WH-1000XM5 Headphones',
-    price: 9800,
-    stock: 60,
-    description: 'Premium noise-cancelling wireless headphones.',
-    imageUrl:
-      'https://m.media-amazon.com/images/I/71Wbdf1ML-L._UF1000,1000_QL80_.jpg',
-
-    discount: 20,
-    isFeatured: true,
-    isActive: false,
-    category: {
-      id: '4',
-      name: 'audio',
-    },
-    updatedAt: new Date(),
-  },
-  {
-    id: '4',
-    name: 'Nike Air Max 270',
-    price: 7500,
-    stock: 200,
-    description: 'Comfortable and stylish sneakers for everyday wear.',
-    imageUrl:
-      'https://cdn.klassy.com.bd/uploads/products/products/Mistine-Acne-Clear-Face-wash-85g-03ba-products.webp',
-    discount: 5,
-    isFeatured: true,
-    isActive: false,
-    category: {
-      id: '3',
-      name: 'fashion',
-    },
-    updatedAt: new Date(),
-  },
-  {
-    id: '5',
-    name: 'Apple MacBook Air M2',
-    price: 28000,
-    stock: 40,
-    description: "Lightweight laptop with Apple's latest M2 chip.",
-    imageUrl:
-      'https://cloudinary.images-iherb.com/image/upload/f_auto,q_auto:eco/images/him/him50047/y/29.jpg',
-
-    discount: 12,
-    isFeatured: true,
-    isActive: false,
-    category: {
-      id: '2',
-      name: 'computers',
-    },
-    updatedAt: new Date(),
-  },
-  {
-    id: '6',
-    name: 'Logitech MX Master 3 Mouse',
-    price: 4500,
-    stock: 5,
-    description: 'Ergonomic wireless mouse with precision tracking.',
-    imageUrl:
-      'https://cdn2.arogga.com/eyJidWNrZXQiOiJhcm9nZ2EiLCJrZXkiOiJQcm9kdWN0LXBfaW1hZ2VzXC82NzcxM1wvNjc3MTMtMS00LTdlM2w0dy5wbmciLCJlZGl0cyI6W119',
-    discount: 8,
-    isFeatured: true,
-    isActive: false,
-    updatedAt: new Date(),
-    category: {
-      id: '1',
-      name: 'accessories',
-    },
-  },
+// products.ts (50 products, static attributes array)
+const staticAttributes = [
+  { id: 1, key: 'color', value: 'red' },
+  { id: 2, key: 'color', value: 'blue' },
+  { id: 3, key: 'color', value: 'black' },
+  { id: 4, key: 'color', value: 'white' },
+  { id: 5, key: 'size', value: 's' },
+  { id: 6, key: 'size', value: 'm' },
+  { id: 7, key: 'size', value: 'l' },
+  { id: 8, key: 'size', value: 'xl' },
 ];
 
-export const products=[...rawProductproducts].map((item)=>{
+const categories = [
+  { id: '1', name: 'accessories' },
+  { id: '2', name: 'computers' },
+  { id: '3', name: 'fashion' },
+  { id: '4', name: 'audio' },
+  { id: '5', name: 'electronics' },
+  { id: '6', name: 'baby' },
+  { id: '7', name: 'home' },
+  { id: '8', name: 'outdoor' },
+];
+
+const templates = [
+  { name: 'Iphone 12 Pro Max', baseImg: 1011 },
+  { name: 'Samsung Galaxy S23 Ultra', baseImg: 1025 },
+  { name: 'Sony WH-1000XM5 Headphones', baseImg: 1033 },
+  { name: 'Nike Air Max 270', baseImg: 1042 },
+  { name: 'Apple MacBook Air M2', baseImg: 1050 },
+  { name: 'Logitech MX Master 3 Mouse', baseImg: 1066 },
+  { name: 'Canon EOS R6 Camera', baseImg: 1074 },
+  { name: 'Dyson V11 Vacuum', baseImg: 1082 },
+  { name: 'Bose QuietComfort Earbuds', baseImg: 1099 },
+  { name: 'Fitbit Charge 5', baseImg: 1108 },
+];
+
+function randomInt(min: number, max: number) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const rawProductproducts = Array.from({ length: 50 }).map((_, idx) => {
+  const t = templates[idx % templates.length];
+  const cat = categories[idx % categories.length];
+  const id = (idx + 1).toString();
+  const name = `${t.name} ${Math.ceil((idx + 1) / templates.length)}`; // make names varied
+  const price = Math.round(randomInt(3000, 30000) / 100) * 100; // round to 100
+  const stock = randomInt(0, 300);
+  const discount = [0, 5, 8, 10, 12, 15, 20][randomInt(0, 6)];
+  // picsum.photos with seed id to have stable images
+  const imageUrl = `https://picsum.photos/seed/product-${id}-${t.baseImg}/800/800`;
+
   return {
-    ...item,
-    slug:item.name.split(" ").join("-").toLocaleLowerCase(),
-    attributes: [
-        { id: 1, key: 'color', value: 'red' },
-        { id: 2, key: 'color', value: 'purple' },
-        { id: 3, key: 'color', value: 'orange' },
-        { id: 4, key: 'size', value: 'xl' },
-        { id: 5, key: 'size', value: '2xl' },
-      ]
-  }
-})
+    id,
+    name,
+    price,
+    stock,
+    description: `High quality ${t.name.toLowerCase()} — reliable, tested, and ready to use.`,
+    imageUrl,
+    discount,
+    isFeatured: idx % 7 === 0,
+    isActive: true,
+    category: cat,
+    updatedAt: new Date(),
+    slug: name.split(' ').join('-').toLocaleLowerCase(),
+    // static attributes array (same for every product)
+    attributes: staticAttributes.map((a) => ({ ...a })),
+  };
+});
+
+export const products = rawProductproducts;

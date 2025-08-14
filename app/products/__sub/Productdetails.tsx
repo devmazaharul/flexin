@@ -38,9 +38,7 @@ export default function Productdetails({ product }: { product: productItems }) {
   const isAlreadyInCart = cartStore.cart.find((item) => item.id === id);
   const isAlreadyInWish = wishStore.wishlist.find((item) => item.id == id);
   // ---- Derived values
-
-
-
+const {COLOR_LEN_MAX,DESCRIPTION_LEN_MAX,SIZE_LEN_MAX}=appConfig.singleProductLimit
   const discountedPrice = useMemo(
     () => price - (price * discount) / 100,
     [price, discount]
@@ -54,17 +52,16 @@ export default function Productdetails({ product }: { product: productItems }) {
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [qty] = useState<number>(1);
 
-
-useEffect(() => {
-  if (isAlreadyInCart) {
-    if (isAlreadyInCart.color) {
-      setSelectedColor(isAlreadyInCart.color);
+  useEffect(() => {
+    if (isAlreadyInCart) {
+      if (isAlreadyInCart.color) {
+        setSelectedColor(isAlreadyInCart.color);
+      }
+      if (isAlreadyInCart.size) {
+        setSelectedSize(isAlreadyInCart.size);
+      }
     }
-    if (isAlreadyInCart.size) {
-      setSelectedSize(isAlreadyInCart.size);
-    }
-  }
-}, [isAlreadyInCart]);
+  }, [isAlreadyInCart]);
 
   // Default select first color/size on mount
   useEffect(() => {
@@ -138,7 +135,10 @@ useEffect(() => {
             {name}
           </h1>
 
-          {/* Rating (placeholder) */}
+         
+<div className='flex items-center justify-between w-3/4'>
+<div>
+ {/* Rating (placeholder) */}
           <div className="flex items-center gap-1 text-sm text-gray-600">
             <Star className="w-4 h-4 fill-purple-400 stroke-purple-400" />
             <Star className="w-4 h-4 fill-amber-400 stroke-amber-400" />
@@ -149,8 +149,19 @@ useEffect(() => {
           </div>
 
           {/* Description */}
-          <p className="text-gray-600 leading-relaxed">{description}</p>
-
+          <p className="text-gray-600 leading-relaxed">{description.slice(0,DESCRIPTION_LEN_MAX)}</p>
+</div>
+  <div>
+    <div>
+            <QRCode
+              size={60}
+              value={`${appConfig.hostname.BASE_URL}/products/${product.slug}`}
+              viewBox={`0 0 256 256`}
+            />{' '}
+            <span className="text-xs">Scan now</span>
+          </div>
+  </div>
+</div>
           {/* Price */}
           <div className="flex items-end gap-3">
             {discount > 0 ? (
@@ -222,20 +233,25 @@ useEffect(() => {
 
                   <ul className="mt-2 flex flex-wrap items-center gap-2">
                     {attributes
-                      .filter((attr) => attr.key === 'color')
+                      .filter((attr) => attr.key === 'color').slice(0,COLOR_LEN_MAX)
                       .map((attr) => (
                         <li
                           key={attr.id}
                           tabIndex={0}
                           role="button"
+                             aria-disabled={!!isAlreadyInCart?.color}
                           aria-label={`Select color ${attr.value}`}
-                          onClick={() => setSelectedColor(attr.value)}
+                          onClick={() => {
+                            if(!isAlreadyInCart?.color){
+                              setSelectedColor(attr.value)
+                            }
+                          }}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ')
                               setSelectedColor(attr.value);
                           }}
                           className={`w-7 h-7 rounded-full cursor-pointer  transition
-                           
+                              ${isAlreadyInCart?.color?'cursor-text':'cursor-pointer'}
                             ${
                               selectedColor === attr.value &&
                               'outline-none ring-2 ring-offset-1 ring-gray-400 '
@@ -267,24 +283,33 @@ useEffect(() => {
 
                   <ul className="mt-2 flex flex-wrap items-center gap-2">
                     {attributes
-                      .filter((attr) => attr.key === 'size')
+                      .filter((attr) => attr.key === 'size').slice(0,SIZE_LEN_MAX)
                       .map((attr) => (
                         <li
                           key={attr.id}
                           tabIndex={0}
                           role="button"
                           aria-label={`Select size ${attr.value}`}
-                          onClick={() => setSelectedSize(attr.value)}
+                          onClick={() => {
+                            if (!isAlreadyInCart?.size) {
+                              setSelectedSize(attr.value);
+                            }
+                          }}
+                          aria-disabled={!!isAlreadyInCart?.size}
                           onKeyDown={(e) => {
                             if (e.key === 'Enter' || e.key === ' ')
                               setSelectedSize(attr.value);
                           }}
                           className={`px-3 py-1.5 rounded-md border-2 text-xs md:text-sm font-semibold uppercase
-                            transition focus:outline-none focus:ring-2 focus:ring-gray-400 cursor-pointer
+                            transition  ${
+                              isAlreadyInCart?.size
+                                ? 'cursor-text '
+                                : 'cursor-pointer hover:border-gray-400'
+                            }
                             ${
                               selectedSize === attr.value
                                 ? 'bg-gray-900 text-white border-gray-900'
-                                : 'border-gray-300 hover:border-gray-400 text-gray-700'
+                                : 'border-gray-300  text-gray-700'
                             }`}
                         >
                           {attr.value}
@@ -300,38 +325,36 @@ useEffect(() => {
           <div className="mt-2 space-y-3">
             {/* Add / Wishlist or Cart controls */}
             {isAlreadyInCart ? (
-             <div>
-
-               <div className="flex items-center gap-2">
-                <Button
-                  disabled={
-                    isAlreadyInCart.quantity === appConfig.cartLimit.MIN
-                  }
-                  onClick={handleDecrementCart}
-                  variant="secondary"
-                  className="hover:bg-gray-200 cursor-pointer"
-                >
-                  <Minus className="w-4 h-4 " />
-                </Button>
-                <span className="text-lg font-semibold w-10 text-center">
-                  {isAlreadyInCart.quantity}
-                </span>
-                <Button
-                  onClick={handleIncrementCart}
-                  disabled={isAlreadyInCart.quantity >= stock}
-                  variant="secondary"
-                  className="hover:bg-gray-200 cursor-pointer"
-                >
-                  <Plus className="w-4 h-4" />
-                </Button>
-               
-              </div>
-               <div className='mt-5'>
-                  <Button variant={"destructive"} className='cursor-pointer'>
+              <div>
+                <div className="flex items-center gap-2">
+                  <Button
+                    disabled={
+                      isAlreadyInCart.quantity === appConfig.cartLimit.MIN
+                    }
+                    onClick={handleDecrementCart}
+                    variant="secondary"
+                    className="hover:bg-gray-200 cursor-pointer"
+                  >
+                    <Minus className="w-4 h-4 " />
+                  </Button>
+                  <span className="text-lg font-semibold w-10 text-center">
+                    {isAlreadyInCart.quantity}
+                  </span>
+                  <Button
+                    onClick={handleIncrementCart}
+                    disabled={isAlreadyInCart.quantity >= stock}
+                    variant="secondary"
+                    className="hover:bg-gray-200 cursor-pointer"
+                  >
+                    <Plus className="w-4 h-4" />
+                  </Button>
+                </div>
+                <div className="mt-5">
+                  <Button variant={'default'} className="cursor-pointer">
                     <Link href={'/checkout'}>Checkout</Link>
                   </Button>
                 </div>
-             </div>
+              </div>
             ) : (
               <div className="grid grid-cols-4 gap-2 w-fit">
                 <Button
@@ -370,14 +393,7 @@ useEffect(() => {
             available
           </div>
 
-          <div>
-            <QRCode
-              size={80}
-              value={`${appConfig.hostname.BASE_URL}/products/${product.slug}`}
-              viewBox={`0 0 256 256`}
-            />{' '}
-            <span className="text-xs">Scan now</span>
-          </div>
+          
         </div>
       </div>
     </div>

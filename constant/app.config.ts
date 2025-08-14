@@ -34,6 +34,11 @@ export const appConfig = Object.freeze({
   },
   cartLimit:{
     MIN:1,
-    MAX:50
+    MAX:30
+  },
+  singleProductLimit:{
+    DESCRIPTION_LEN_MAX:30,
+    SIZE_LEN_MAX:5,
+    COLOR_LEN_MAX:5,
   }
 });
