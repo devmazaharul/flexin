@@ -109,12 +109,12 @@ export const products=[...rawProductproducts].map((item)=>{
   return {
     ...item,
     slug:item.name.split(" ").join("-").toLocaleLowerCase(),
-    attributes: Math.floor(Math.random()*20)%2==0 ? [
+    attributes: [
         { id: 1, key: 'color', value: 'red' },
         { id: 2, key: 'color', value: 'purple' },
         { id: 3, key: 'color', value: 'orange' },
         { id: 4, key: 'size', value: 'xl' },
         { id: 5, key: 'size', value: '2xl' },
-      ]:[]
+      ]
   }
 })

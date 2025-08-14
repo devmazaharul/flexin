@@ -19,6 +19,7 @@ import Image from 'next/image';
 import React, { useState, useEffect, useMemo } from 'react';
 import { toast } from 'sonner';
 import useWishStore from '@/hook/useWishStore';
+import Link from 'next/link';
 
 export default function Productdetails({ product }: { product: productItems }) {
   const {
@@ -30,13 +31,16 @@ export default function Productdetails({ product }: { product: productItems }) {
     discount,
     imageUrl,
     category,
-    attributes
+    attributes,
   } = product;
-  const wishStore=useWishStore()
+  const wishStore = useWishStore();
   const cartStore = useCartStore();
   const isAlreadyInCart = cartStore.cart.find((item) => item.id === id);
-  const isAlreadyInWish=wishStore.wishlist.find((item)=>item.id==id)
+  const isAlreadyInWish = wishStore.wishlist.find((item) => item.id == id);
   // ---- Derived values
+
+
+
   const discountedPrice = useMemo(
     () => price - (price * discount) / 100,
     [price, discount]
@@ -49,6 +53,18 @@ export default function Productdetails({ product }: { product: productItems }) {
   const [selectedColor, setSelectedColor] = useState<string>('');
   const [selectedSize, setSelectedSize] = useState<string>('');
   const [qty] = useState<number>(1);
+
+
+useEffect(() => {
+  if (isAlreadyInCart) {
+    if (isAlreadyInCart.color) {
+      setSelectedColor(isAlreadyInCart.color);
+    }
+    if (isAlreadyInCart.size) {
+      setSelectedSize(isAlreadyInCart.size);
+    }
+  }
+}, [isAlreadyInCart]);
 
   // Default select first color/size on mount
   useEffect(() => {
@@ -88,8 +104,6 @@ export default function Productdetails({ product }: { product: productItems }) {
   };
 
   const handleDecrementCart = () => cartStore.decrement(id);
-
-
 
   return (
     <div className="container mx-auto p-4 md:p-8">
@@ -286,7 +300,9 @@ export default function Productdetails({ product }: { product: productItems }) {
           <div className="mt-2 space-y-3">
             {/* Add / Wishlist or Cart controls */}
             {isAlreadyInCart ? (
-              <div className="flex items-center gap-2">
+             <div>
+
+               <div className="flex items-center gap-2">
                 <Button
                   disabled={
                     isAlreadyInCart.quantity === appConfig.cartLimit.MIN
@@ -308,7 +324,14 @@ export default function Productdetails({ product }: { product: productItems }) {
                 >
                   <Plus className="w-4 h-4" />
                 </Button>
+               
               </div>
+               <div className='mt-5'>
+                  <Button variant={"destructive"} className='cursor-pointer'>
+                    <Link href={'/checkout'}>Checkout</Link>
+                  </Button>
+                </div>
+             </div>
             ) : (
               <div className="grid grid-cols-4 gap-2 w-fit">
                 <Button
@@ -321,10 +344,14 @@ export default function Productdetails({ product }: { product: productItems }) {
                   {variantMissing ? 'Select options' : 'Add to Cart'}
                 </Button>
                 <Button
-                  onClick={()=>wishStore.toggle(product)}
+                  onClick={() => wishStore.toggle(product)}
                   variant="outline"
                   className="flex items-center col-span-1 justify-center cursor-pointer"
-                  title={isAlreadyInWish ? 'Remove from wishlist' : 'Save to wishlist'}
+                  title={
+                    isAlreadyInWish
+                      ? 'Remove from wishlist'
+                      : 'Save to wishlist'
+                  }
                 >
                   <Heart
                     className={`${
@@ -344,7 +371,12 @@ export default function Productdetails({ product }: { product: productItems }) {
           </div>
 
           <div>
-            <QRCode size={80} value={`${appConfig.hostname.BASE_URL}/products/${product.slug}`} viewBox={`0 0 256 256`} /> <span className='text-xs'>Scan now</span>
+            <QRCode
+              size={80}
+              value={`${appConfig.hostname.BASE_URL}/products/${product.slug}`}
+              viewBox={`0 0 256 256`}
+            />{' '}
+            <span className="text-xs">Scan now</span>
           </div>
         </div>
       </div>

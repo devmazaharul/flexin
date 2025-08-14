@@ -14,20 +14,28 @@ export default function ProductCard({
 }: {
   productInfo: productItems;
 }) {
-  const { id, name, description, price, stock, discount, imageUrl,slug } =
+  const { id, name, description, price, stock, discount, imageUrl,slug ,attributes} =
     productInfo;
 
   const addtocartAction = useCartStore();
 
   const isAlreadyinCart = addtocartAction.cart.find((item) => item.id == id);
 
+  const addTocartkeys={
+    ...productInfo,
+    attributes:null
+  }
+
+  const defultSize=attributes.find((item)=>item.key=="size")?.value || undefined
+  const defaultColor=attributes.find((item)=>item.key=="color")?.value || undefined
+console.log(defaultColor);
   const handleAddtoCart = () => {
     addtocartAction.addToCart({
-      ...productInfo,
+      ...addTocartkeys,
       quantity: 1,
-      size:'ss',
-      color:'dld',
-      slug:"sls"
+      size:defultSize,
+      color:defaultColor,
+    
     });
     toast.success('Your selection is now in the cart 🎉');
   };

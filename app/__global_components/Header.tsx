@@ -1,18 +1,22 @@
-import { SparklesText } from '@/components/magicui/sparkles-text';
 import Link from 'next/link';
 import React from 'react';
 import SearchMenu from './Search';
 import CartsMenu from './CartsMenu';
+import { Borel } from 'next/font/google';
+
+const logoFont = Borel({
+  weight: '400',
+  style: 'normal',
+  subsets: ['vietnamese'],
+});
 
 export default function Header() {
   return (
-    <div className="flex items-center justify-between h-15">
+    <div className="flex items-center justify-between h-17">
       <div>
-        <h1>
-          <Link href={'/'} className="text-xl font-semibold">
-            <SparklesText sparklesCount={5}>FlexIn</SparklesText>
-          </Link>
-        </h1>
+        <Link href={'/'}>
+          <h1 className={`${logoFont.className} text-2xl font-bold`}>FlexIn</h1>
+        </Link>
       </div>
 
       {/* searchBar */}

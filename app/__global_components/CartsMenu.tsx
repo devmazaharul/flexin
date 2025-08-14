@@ -130,7 +130,7 @@ export default function CartsMenu() {
                     <li key={it.id} className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-md bg-gray-100 overflow-hidden flex-shrink-0">
                         {it.imageUrl ? (
-                          <Image src={it.imageUrl} alt={it.name} className="w-full h-full object-cover" />
+                          <Image src={it.imageUrl} alt={it.name} width={25} height={25} className="w-full h-full object-cover" />
                         ) : (
                           <div className="w-full h-full bg-gray-200" />
                         )}
