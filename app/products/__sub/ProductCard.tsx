@@ -28,7 +28,6 @@ export default function ProductCard({
 
   const defultSize=attributes.find((item)=>item.key=="size")?.value || undefined
   const defaultColor=attributes.find((item)=>item.key=="color")?.value || undefined
-console.log(defaultColor);
   const handleAddtoCart = () => {
     addtocartAction.addToCart({
       ...addTocartkeys,

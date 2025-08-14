@@ -5,9 +5,9 @@ import CartsMenu from './CartsMenu';
 import { Borel } from 'next/font/google';
 
 const logoFont = Borel({
-  weight: '400',
   style: 'normal',
   subsets: ['vietnamese'],
+  weight:"400"
 });
 
 export default function Header() {

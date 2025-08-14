@@ -38,7 +38,8 @@ export default function Productdetails({ product }: { product: productItems }) {
   const isAlreadyInCart = cartStore.cart.find((item) => item.id === id);
   const isAlreadyInWish = wishStore.wishlist.find((item) => item.id == id);
   // ---- Derived values
-const {COLOR_LEN_MAX,DESCRIPTION_LEN_MAX,SIZE_LEN_MAX}=appConfig.singleProductLimit
+  const { COLOR_LEN_MAX, DESCRIPTION_LEN_MAX, SIZE_LEN_MAX } =
+    appConfig.singleProductLimit;
   const discountedPrice = useMemo(
     () => price - (price * discount) / 100,
     [price, discount]
@@ -135,33 +136,34 @@ const {COLOR_LEN_MAX,DESCRIPTION_LEN_MAX,SIZE_LEN_MAX}=appConfig.singleProductLi
             {name}
           </h1>
 
-         
-<div className='flex items-center justify-between w-3/4'>
-<div>
- {/* Rating (placeholder) */}
-          <div className="flex items-center gap-1 text-sm text-gray-600">
-            <Star className="w-4 h-4 fill-purple-400 stroke-purple-400" />
-            <Star className="w-4 h-4 fill-amber-400 stroke-amber-400" />
-            <Star className="w-4 h-4 fill-red-400 stroke-red-400" />
-            <Star className="w-4 h-4 fill-blue-400 stroke-blue-400" />
-            <Star className="w-4 h-4 stroke-yellow-400" />
-            <span className="ml-1">(Maximum positive reviews)</span>
-          </div>
+          <div className="md:flex items-center justify-between md:w-3/4">
+            <div>
+              {/* Rating (placeholder) */}
+              <div className="flex items-center gap-1 text-sm text-gray-600 mb-2">
+                <Star className="w-4 h-4 fill-purple-400 stroke-purple-400" />
+                <Star className="w-4 h-4 fill-amber-400 stroke-amber-400" />
+                <Star className="w-4 h-4 fill-red-400 stroke-red-400" />
+                <Star className="w-4 h-4 fill-blue-400 stroke-blue-400" />
+                <Star className="w-4 h-4 stroke-yellow-400" />
+                <span className="ml-1">(Maximum positive reviews)</span>
+              </div>
 
-          {/* Description */}
-          <p className="text-gray-600 leading-relaxed">{description.slice(0,DESCRIPTION_LEN_MAX)}</p>
-</div>
-  <div>
-    <div>
-            <QRCode
-              size={60}
-              value={`${appConfig.hostname.BASE_URL}/products/${product.slug}`}
-              viewBox={`0 0 256 256`}
-            />{' '}
-            <span className="text-xs">Scan now</span>
+              {/* Description */}
+              <p className="text-gray-600 leading-relaxed">
+                {description.slice(0, DESCRIPTION_LEN_MAX)}
+              </p>
+            </div>
+            <div>
+              <div className="my-3 hidden md:block float-end">
+                <QRCode
+                  size={60}
+                  value={`${appConfig.hostname.BASE_URL}/products/${product.slug}`}
+                  viewBox={`0 0 256 256`}
+                />
+                <span className="text-xs">Scan now</span>
+              </div>
+            </div>
           </div>
-  </div>
-</div>
           {/* Price */}
           <div className="flex items-end gap-3">
             {discount > 0 ? (
@@ -172,7 +174,7 @@ const {COLOR_LEN_MAX,DESCRIPTION_LEN_MAX,SIZE_LEN_MAX}=appConfig.singleProductLi
                 <span className="text-lg line-through text-gray-400">
                   €{price.toFixed(0)}
                 </span>
-                <span className="px-2 py-0.5 bg-indigo-100 text-indigo-700 font-medium text-sm rounded-md">
+                <span className="px-2 py-0.5 bg-gray-100 text-gray-700 font-medium text-sm rounded-md">
                   -{discount}%
                 </span>
               </>
@@ -206,7 +208,7 @@ const {COLOR_LEN_MAX,DESCRIPTION_LEN_MAX,SIZE_LEN_MAX}=appConfig.singleProductLi
 
           {/* Attributes */}
           {attributes && attributes.length > 0 && (
-            <div className="mt-3 space-y-4 leading-relaxed">
+            <div className="mt-3 space-y-6 leading-relaxed">
               {/* Color */}
               {hasColors && (
                 <div>
@@ -233,17 +235,18 @@ const {COLOR_LEN_MAX,DESCRIPTION_LEN_MAX,SIZE_LEN_MAX}=appConfig.singleProductLi
 
                   <ul className="mt-2 flex flex-wrap items-center gap-2">
                     {attributes
-                      .filter((attr) => attr.key === 'color').slice(0,COLOR_LEN_MAX)
+                      .filter((attr) => attr.key === 'color')
+                      .slice(0, COLOR_LEN_MAX)
                       .map((attr) => (
                         <li
                           key={attr.id}
                           tabIndex={0}
                           role="button"
-                             aria-disabled={!!isAlreadyInCart?.color}
+                          aria-disabled={!!isAlreadyInCart?.color}
                           aria-label={`Select color ${attr.value}`}
                           onClick={() => {
-                            if(!isAlreadyInCart?.color){
-                              setSelectedColor(attr.value)
+                            if (!isAlreadyInCart?.color) {
+                              setSelectedColor(attr.value);
                             }
                           }}
                           onKeyDown={(e) => {
@@ -251,7 +254,11 @@ const {COLOR_LEN_MAX,DESCRIPTION_LEN_MAX,SIZE_LEN_MAX}=appConfig.singleProductLi
                               setSelectedColor(attr.value);
                           }}
                           className={`w-7 h-7 rounded-full cursor-pointer  transition
-                              ${isAlreadyInCart?.color?'cursor-text':'cursor-pointer'}
+                              ${
+                                isAlreadyInCart?.color
+                                  ? 'cursor-text'
+                                  : 'cursor-pointer'
+                              }
                             ${
                               selectedColor === attr.value &&
                               'outline-none ring-2 ring-offset-1 ring-gray-400 '
@@ -283,7 +290,8 @@ const {COLOR_LEN_MAX,DESCRIPTION_LEN_MAX,SIZE_LEN_MAX}=appConfig.singleProductLi
 
                   <ul className="mt-2 flex flex-wrap items-center gap-2">
                     {attributes
-                      .filter((attr) => attr.key === 'size').slice(0,SIZE_LEN_MAX)
+                      .filter((attr) => attr.key === 'size')
+                      .slice(0, SIZE_LEN_MAX)
                       .map((attr) => (
                         <li
                           key={attr.id}
@@ -392,8 +400,6 @@ const {COLOR_LEN_MAX,DESCRIPTION_LEN_MAX,SIZE_LEN_MAX}=appConfig.singleProductLi
             <Truck size={16} /> Delivery in 2–5 days • Cash on Delivery
             available
           </div>
-
-          
         </div>
       </div>
     </div>
