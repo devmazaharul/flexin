@@ -6,13 +6,9 @@ import { useCartStore } from '@/hook/persist'; // তোমার existing hook
 import { toast } from 'sonner';
 import Image from 'next/image';
 import useWishStore from '@/hook/useWishStore';
+import Link from 'next/link';
 
-/**
- * CartsMenu (updated)
- * - Same look & feel as your original
- * - Wishlist now comes from Zustand `useWishStore`
- * - Uses store methods: remove, clear, wishlist array
- */
+
 
 export default function CartsMenu() {
   const cartStore = useCartStore();
@@ -162,7 +158,7 @@ export default function CartsMenu() {
                     setOpenCart(false);
                   }}
                 >
-                  View
+                <Link href={'/carts'}>  View</Link>
                 </button>
                 <button
                   className="text-xs bg-rose-500 text-white px-3 py-1 rounded-md hover:opacity-95 cursor-pointer"
@@ -171,7 +167,7 @@ export default function CartsMenu() {
                     setOpenCart(false);
                   }}
                 >
-                  Checkout
+                  <Link href={'/checkout'}> Checkout</Link>
                 </button>
               </div>
             </div>

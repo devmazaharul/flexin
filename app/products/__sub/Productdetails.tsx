@@ -140,12 +140,12 @@ useEffect(() => {
 
           {/* Rating (placeholder) */}
           <div className="flex items-center gap-1 text-sm text-gray-600">
-            <Star className="w-4 h-4 fill-yellow-400 stroke-yellow-400" />
-            <Star className="w-4 h-4 fill-yellow-400 stroke-yellow-400" />
-            <Star className="w-4 h-4 fill-yellow-400 stroke-yellow-400" />
-            <Star className="w-4 h-4 fill-yellow-400 stroke-yellow-400" />
+            <Star className="w-4 h-4 fill-purple-400 stroke-purple-400" />
+            <Star className="w-4 h-4 fill-amber-400 stroke-amber-400" />
+            <Star className="w-4 h-4 fill-red-400 stroke-red-400" />
+            <Star className="w-4 h-4 fill-blue-400 stroke-blue-400" />
             <Star className="w-4 h-4 stroke-yellow-400" />
-            <span className="ml-1">(128 reviews)</span>
+            <span className="ml-1">(Maximum positive reviews)</span>
           </div>
 
           {/* Description */}
