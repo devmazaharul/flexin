@@ -154,7 +154,7 @@ export default function Productdetails({ product }: { product: productItems }) {
               </p>
             </div>
             <div>
-              <div className="my-3 hidden md:block float-end">
+              <div className="my-3 hidden lg:block float-end">
                 <QRCode
                   size={60}
                   value={`${appConfig.hostname.BASE_URL}/products/${product.slug}`}
