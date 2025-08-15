@@ -174,7 +174,7 @@ export default function Productdetails({ product }: { product: productItems }) {
                 <span className="text-lg line-through text-gray-400">
                   €{price.toFixed(0)}
                 </span>
-                <span className="px-2 py-0.5 bg-gray-100 text-gray-700 font-medium text-sm rounded-md">
+                <span className="px-2 py-0.5 bg-orange-100 text-orange-400 font-medium text-sm rounded-md">
                   -{discount}%
                 </span>
               </>
