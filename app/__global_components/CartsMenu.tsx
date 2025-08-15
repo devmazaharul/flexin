@@ -1,7 +1,15 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Heart, User, X, LogOut, Settings, ShoppingBag, Bell } from 'lucide-react';
+import {
+  Heart,
+  User,
+  X,
+  LogOut,
+  Settings,
+  ShoppingBag,
+  Bell,
+} from 'lucide-react';
 import { useCartStore } from '@/hook/persist'; // তোমার existing hook
 import { toast } from 'sonner';
 import Image from 'next/image';
@@ -19,7 +27,10 @@ type NotificationItem = {
 
 export default function CartsMenu() {
   const cartStore = useCartStore();
-  const cartCount = cartStore.cart.reduce((sum, item) => sum + (item.quantity || 0), 0);
+  const cartCount = cartStore.cart.reduce(
+    (sum, item) => sum + (item.quantity || 0),
+    0
+  );
 
   // ----- WISHLIST from Zustand -----
   const wishlist = useWishStore((s) => s.wishlist);
@@ -44,8 +55,24 @@ export default function CartsMenu() {
       href: '/orders/1234',
     },
     {
-      id: 'n2',
+      id: 'n3',
       title: 'New discount on selected items',
+      body: 'Up to 20% off on accessories this week.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/collections/accessories',
+    },
+    {
+      id: 'n4',
+      title: 'Payment cancel',
+      body: 'Up to 20% off on accessories this week.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/collections/accessories',
+    },
+    {
+      id: 'n2',
+      title: 'sucessfully complete paymenT',
       body: 'Up to 20% off on accessories this week.',
       createdAt: new Date().toISOString(),
       read: false,
@@ -67,8 +94,9 @@ export default function CartsMenu() {
       if (cartRef.current && !cartRef.current.contains(el)) setOpenCart(false);
       if (wishRef.current && !wishRef.current.contains(el)) setOpenWish(false);
       if (userRef.current && !userRef.current.contains(el)) setOpenUser(false);
-      if (notifRef.current && !notifRef.current.contains(el)) setOpenNotif(false);
+       if (notifRef.current && !notifRef.current.contains(el)) setOpenNotif(false);
     }
+
     window.addEventListener('click', handler);
     return () => window.removeEventListener('click', handler);
   }, []);
@@ -104,7 +132,9 @@ export default function CartsMenu() {
   };
 
   const markRead = (id: string) => {
-    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+    setNotifications((prev) =>
+      prev.map((n) => (n.id === id ? { ...n, read: true } : n))
+    );
   };
 
   const clearNotifications = () => {
@@ -150,7 +180,7 @@ export default function CartsMenu() {
           <div
             role="dialog"
             aria-label="Cart preview"
-            className="absolute right-0 mt-2 w-72 bg-white border border-gray-100 shadow-lg rounded-lg p-3 z-50 animate-slideDown"
+            className="absolute right-0 mt-2 w-72 bg-white border border-gray-100 shadow-2xl shadow-gray-300/80 rounded-xl -lg p-3 z-50 animate-slideDown"
           >
             <div className="flex items-center justify-between">
               <h4 className="font-medium text-gray-800">Cart</h4>
@@ -172,7 +202,13 @@ export default function CartsMenu() {
                     <li key={it.id} className="flex items-center gap-3">
                       <div className="w-12 h-12 rounded-md bg-gray-100 overflow-hidden flex-shrink-0">
                         {it.imageUrl ? (
-                          <Image src={it.imageUrl} alt={it.name} width={25} height={25} className="w-full h-full object-cover" />
+                          <Image
+                            src={it.imageUrl}
+                            alt={it.name}
+                            width={25}
+                            height={25}
+                            className="w-full h-full object-cover"
+                          />
                         ) : (
                           <div className="w-full h-full bg-gray-200" />
                         )}
@@ -194,7 +230,13 @@ export default function CartsMenu() {
 
             <div className="mt-3 flex items-center justify-between">
               <div className="text-sm font-semibold text-gray-800">
-                Total: €{cartStore.cart.reduce((s: number, i) => s + (i.price || 0) * (i.quantity || 1), 0).toFixed(0)}
+                Total: €
+                {cartStore.cart
+                  .reduce(
+                    (s: number, i) => s + (i.price || 0) * (i.quantity || 1),
+                    0
+                  )
+                  .toFixed(0)}
               </div>
               <div className="flex items-center gap-2">
                 <button
@@ -204,10 +246,10 @@ export default function CartsMenu() {
                     setOpenCart(false);
                   }}
                 >
-                  <Link href={'/carts'}>  View</Link>
+                  <Link href={'/carts'}> View</Link>
                 </button>
                 <button
-                  className="text-xs bg-rose-500 text-white px-3 py-1 rounded-md hover:opacity-95 cursor-pointer"
+                  className="text-xs bg-rose-500 text-white px-3 py-1 rounded-sm hover:opacity-95 cursor-pointer"
                   onClick={() => {
                     toast('Checkout flow (implement)');
                     setOpenCart(false);
@@ -238,7 +280,11 @@ export default function CartsMenu() {
           }}
           title="Wishlist"
         >
-          <Heart className={`w-5 h-5 ${wishCount ? 'text-rose-500' : 'text-gray-700'}`} />
+          <Heart
+            className={`w-5 h-5 ${
+              wishCount ? 'text-rose-500' : 'text-gray-700'
+            }`}
+          />
           {wishCount > 0 && (
             <span className="absolute -top-1 -right-1 min-w-[18px] px-1 text-[11px] font-semibold rounded-full bg-rose-500 text-white flex items-center justify-center">
               {wishCount}
@@ -247,7 +293,7 @@ export default function CartsMenu() {
         </button>
 
         {openWish && (
-          <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-100 shadow-lg rounded-lg p-3 z-50 animate-slideDown">
+          <div className="absolute right-0 mt-2 w-72 bg-white border border-gray-100 shadow-2xl shadow-gray-300/80 rounded-xl  p-3 z-50 animate-slideDown">
             <div className="flex items-center justify-between">
               <h4 className="font-medium text-gray-800">Wishlist</h4>
               <button
@@ -265,7 +311,10 @@ export default function CartsMenu() {
               ) : (
                 <ul className="space-y-2 max-h-48 overflow-auto">
                   {wishlist.map((item) => (
-                    <li key={item.id ?? item} className="flex items-center justify-between">
+                    <li
+                      key={item.id ?? item}
+                      className="flex items-center justify-between"
+                    >
                       <div className="text-sm text-gray-800">{item.name}</div>
                       <div className="flex items-center gap-2">
                         <button
@@ -324,7 +373,11 @@ export default function CartsMenu() {
           }}
           title="Notifications"
         >
-          <Bell className={`w-5 h-5 ${unreadCount ? 'text-rose-500' : 'text-gray-700'}`} />
+          <Bell
+            className={`w-5 h-5 ${
+              unreadCount ? 'text-rose-500' : 'text-gray-700'
+            }`}
+          />
           {unreadCount > 0 && (
             <span className="absolute -top-1 -right-1 min-w-[18px] px-1 text-[11px] font-semibold rounded-full bg-rose-500 text-white flex items-center justify-center">
               {unreadCount}
@@ -333,7 +386,7 @@ export default function CartsMenu() {
         </button>
 
         {openNotif && (
-          <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-100 shadow-lg rounded-lg p-3 z-50 animate-slideDown">
+          <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-100 shadow-2xl shadow-gray-300/80 rounded-xl p-3 z-50 animate-slideDown">
             <div className="flex items-center justify-between">
               <h4 className="font-medium text-gray-800">Notifications</h4>
               <div className="flex items-center gap-2">
@@ -361,19 +414,33 @@ export default function CartsMenu() {
                   {notifications.map((n) => (
                     <li
                       key={n.id}
-                      className={`flex items-start gap-3 p-2 rounded-md ${n.read ? 'bg-white' : 'bg-amber-50'}`}
+                      className={`flex items-start gap-3 p-2 rounded-md ${
+                        n.read ? 'bg-white' : 'bg-amber-50'
+                      }`}
                     >
                       <div className="w-9 h-9 rounded-full bg-gray-100 grid place-items-center text-xs font-semibold text-gray-600">
                         {/* short icon / initials */}
                         🔔
                       </div>
 
-                      <div className="flex-1">
-                        <Link href={n.href ?? '#'} onClick={() => { markRead(n.id); setOpenNotif(false); }}>
-                          <div className="text-sm font-medium text-gray-800">{n.title}</div>
-                          {n.body && <div className="text-xs text-gray-500 line-clamp-2">{n.body}</div>}
-                        </Link>
-                        <div className="text-[11px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
+                      <div className="flex-1  cursor-grab">
+                        <div
+                          onClick={() => {
+                            markRead(n.id);
+                          }}
+                        >
+                          <div className="text-sm font-medium text-gray-800 capitalize">
+                            {n.title}
+                          </div>
+                          {n.body && (
+                            <div className="text-xs text-gray-500 line-clamp-2">
+                              {n.body}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-gray-400 mt-1">
+                          {new Date(n.createdAt).toLocaleString()}
+                        </div>
                       </div>
 
                       <div className="flex items-start">
@@ -435,7 +502,13 @@ export default function CartsMenu() {
           title="Account"
         >
           <div className="w-8 h-8 rounded-full overflow-hidden bg-purple-400">
-            <Image src={fakeUser.avatar} alt={fakeUser.name} width={32} height={32} className="object-cover" />
+            <Image
+              src={fakeUser.avatar}
+              alt={fakeUser.name}
+              width={32}
+              height={32}
+              className="object-cover"
+            />
           </div>
         </button>
 
@@ -443,10 +516,18 @@ export default function CartsMenu() {
           <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-100 shadow-lg rounded-lg p-3 z-50 animate-slideDown">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-400">
-                <Image src={fakeUser.avatar} alt={fakeUser.name} width={40} height={40} className="object-cover" />
+                <Image
+                  src={fakeUser.avatar}
+                  alt={fakeUser.name}
+                  width={40}
+                  height={40}
+                  className="object-cover"
+                />
               </div>
               <div>
-                <div className="text-sm font-medium text-gray-800">{fakeUser.name}</div>
+                <div className="text-sm font-medium text-gray-800">
+                  {fakeUser.name}
+                </div>
                 <div className="text-xs text-gray-500">{fakeUser.email}</div>
               </div>
             </div>
