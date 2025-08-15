@@ -168,8 +168,8 @@ export default function CartItems() {
                   </div>
 
                   {/* Quantity controls */}
-                  <div className="flex items-center  ">
-                    <div className="mt-3 flex items-center gap-1">
+                  <div className="flex items-center   ">
+                    <div className=" flex items-center gap-1">
                       <button
                         aria-label={`Decrease quantity of ${it.name}`}
                         onClick={() => handleDecrement(it)}
@@ -258,8 +258,8 @@ export default function CartItems() {
               }
             >
               <Button
-                variant={'default'}
-                className="w-full cursor-pointer text-gray-100"
+                variant={'outline'}
+                className="w-full cursor-pointer text-white bg-gray-700  hover:bg-gray-500 hover:text-white"
               >
                 Checkout
               </Button>
@@ -269,7 +269,7 @@ export default function CartItems() {
               href="/products"
               className="block my-2  w-full text-center text-md py-2 rounded-md"
             >
-              <Button variant={'secondary'} className="w-full cursor-pointer">
+              <Button variant={'secondary'} className="w-full cursor-pointer hover:bg-gray-50">
                 {' '}
                 Continue shopping
               </Button>
@@ -296,7 +296,7 @@ export default function CartItems() {
           >
             <div className="flex items-start justify-between">
               <h3 className="text-lg font-semibold">Remove item</h3>
-              <button className="p-1" onClick={cancelRemove} aria-label="Close">
+              <button className="p-1 cursor-pointer" onClick={cancelRemove} aria-label="Close">
                 <X />
               </button>
             </div>
@@ -308,17 +308,18 @@ export default function CartItems() {
             <div className="mt-5 flex justify-end gap-2">
               <button
                 onClick={cancelRemove}
-                className="px-3 py-1 rounded-md border"
+                className="px-3 py-1 rounded-md border cursor-pointer"
               >
                 Cancel
               </button>
-              <button
+              <Button
                 ref={confirmButtonRef}
                 onClick={confirmRemove}
-                className="px-3 py-1 rounded-md bg-rose-600 text-white"
+                className='cursor-pointer'
+               variant={"destructive"}
               >
                 Remove
-              </button>
+              </Button>
             </div>
           </div>
         </div>

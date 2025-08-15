@@ -59,7 +59,7 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
     title: 'New discount on selected items',
     body: 'Up to 20% off on accessories this week.',
     createdAt: new Date().toISOString(),
-    read: true,
+    read: false,
     href: '/collections/accessories',
   },
   {
@@ -75,7 +75,7 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
     title: 'Successfully completed payment',
     body: 'Your payment was successful. Thank you for your purchase!',
     createdAt: new Date().toISOString(),
-    read: true,
+    read: false,
     href: '/orders/5678',
   },
   {
@@ -91,7 +91,7 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
     title: 'Weekly newsletter',
     body: 'Check out the latest updates and offers this week.',
     createdAt: new Date().toISOString(),
-    read: true,
+    read: false,
     href: '/news',
   },
   {
@@ -107,7 +107,7 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
     title: 'Stock alert: Item back in stock',
     body: 'The item you wanted is now available again.',
     createdAt: new Date().toISOString(),
-    read: true,
+    read: false,
     href: '/products/abc123',
   },
   {
@@ -123,7 +123,7 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
     title: 'Security alert: New login detected',
     body: 'A new login to your account was detected.',
     createdAt: new Date().toISOString(),
-    read: true,
+    read: false,
     href: '/account/security',
   },
 ]);
