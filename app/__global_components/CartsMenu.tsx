@@ -290,10 +290,7 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
               <div className="flex items-center gap-2">
                 <button
                   className="text-xs px-2 py-1 rounded-md hover:bg-gray-100 cursor-pointer"
-                  onClick={() => {
-                    toast('Go to cart (implement route)');
-                    setOpenCart(false);
-                  }}
+                 
                 >
                   <Link href={'/carts'}> View</Link>
                 </button>
