@@ -37,7 +37,7 @@ export default async function RootLayout({
          {children}
        </div>
         <Toaster
-          position="top-right"
+          position="top-center"
           closeButton
           expand={false}
           duration={3000}

@@ -1,14 +1,21 @@
 'use client';
 
 import React, { useEffect, useRef, useState } from 'react';
-import { Heart, User, X, LogOut, Settings, ShoppingBag } from 'lucide-react';
+import { Heart, User, X, LogOut, Settings, ShoppingBag, Bell } from 'lucide-react';
 import { useCartStore } from '@/hook/persist'; // তোমার existing hook
 import { toast } from 'sonner';
 import Image from 'next/image';
 import useWishStore from '@/hook/useWishStore';
 import Link from 'next/link';
 
-
+type NotificationItem = {
+  id: string;
+  title: string;
+  body?: string;
+  createdAt: string;
+  read?: boolean;
+  href?: string;
+};
 
 export default function CartsMenu() {
   const cartStore = useCartStore();
@@ -18,7 +25,6 @@ export default function CartsMenu() {
   const wishlist = useWishStore((s) => s.wishlist);
   const removeFromWish = useWishStore((s) => s.remove);
   const clearWish = useWishStore((s) => s.clear);
-  // optional selector for count
   const wishCount = wishlist.length;
 
   // dropdown states
@@ -26,9 +32,33 @@ export default function CartsMenu() {
   const [openWish, setOpenWish] = useState(false);
   const [openUser, setOpenUser] = useState(false);
 
+  // notification state
+  const [openNotif, setOpenNotif] = useState(false);
+  const [notifications, setNotifications] = useState<NotificationItem[]>([
+    {
+      id: 'n1',
+      title: 'Order #1234 shipped',
+      body: 'Your order is on the way. Track it from your orders page.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/orders/1234',
+    },
+    {
+      id: 'n2',
+      title: 'New discount on selected items',
+      body: 'Up to 20% off on accessories this week.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/collections/accessories',
+    },
+  ]);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
   const cartRef = useRef<HTMLDivElement | null>(null);
   const wishRef = useRef<HTMLDivElement | null>(null);
   const userRef = useRef<HTMLDivElement | null>(null);
+  const notifRef = useRef<HTMLDivElement | null>(null);
 
   // click outside handler
   useEffect(() => {
@@ -37,6 +67,7 @@ export default function CartsMenu() {
       if (cartRef.current && !cartRef.current.contains(el)) setOpenCart(false);
       if (wishRef.current && !wishRef.current.contains(el)) setOpenWish(false);
       if (userRef.current && !userRef.current.contains(el)) setOpenUser(false);
+      if (notifRef.current && !notifRef.current.contains(el)) setOpenNotif(false);
     }
     window.addEventListener('click', handler);
     return () => window.removeEventListener('click', handler);
@@ -49,13 +80,14 @@ export default function CartsMenu() {
         setOpenCart(false);
         setOpenWish(false);
         setOpenUser(false);
+        setOpenNotif(false);
       }
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // sample functions (now using zustand)
+  // wishlist handlers
   const handleRemoveFromWishlist = (id: string) => {
     removeFromWish(id);
     toast.success('Removed from wishlist');
@@ -64,6 +96,19 @@ export default function CartsMenu() {
   const handleClearWishlist = () => {
     clearWish();
     toast.success('Wishlist cleared');
+  };
+
+  // notification handlers
+  const markAllRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const markRead = (id: string) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  };
+
+  const clearNotifications = () => {
+    setNotifications([]);
   };
 
   const fakeUser = {
@@ -85,6 +130,7 @@ export default function CartsMenu() {
             setOpenCart((v) => !v);
             setOpenWish(false);
             setOpenUser(false);
+            setOpenNotif(false);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') setOpenCart((v) => !v);
@@ -158,7 +204,7 @@ export default function CartsMenu() {
                     setOpenCart(false);
                   }}
                 >
-                <Link href={'/carts'}>  View</Link>
+                  <Link href={'/carts'}>  View</Link>
                 </button>
                 <button
                   className="text-xs bg-rose-500 text-white px-3 py-1 rounded-md hover:opacity-95 cursor-pointer"
@@ -185,6 +231,7 @@ export default function CartsMenu() {
             setOpenWish((v) => !v);
             setOpenCart(false);
             setOpenUser(false);
+            setOpenNotif(false);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') setOpenWish((v) => !v);
@@ -258,6 +305,118 @@ export default function CartsMenu() {
         )}
       </div>
 
+      {/* === NOTIFICATION ICON & DROPDOWN === */}
+      <div className="relative hidden md:block" ref={notifRef}>
+        <button
+          className="relative p-2 cursor-pointer rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+          aria-haspopup="menu"
+          aria-expanded={openNotif}
+          onClick={() => {
+            setOpenNotif((v) => !v);
+            setOpenCart(false);
+            setOpenWish(false);
+            setOpenUser(false);
+            // optional: mark all read when opened
+            // setNotifications(prev => prev.map(n => ({...n, read: true})));
+          }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') setOpenNotif((v) => !v);
+          }}
+          title="Notifications"
+        >
+          <Bell className={`w-5 h-5 ${unreadCount ? 'text-rose-500' : 'text-gray-700'}`} />
+          {unreadCount > 0 && (
+            <span className="absolute -top-1 -right-1 min-w-[18px] px-1 text-[11px] font-semibold rounded-full bg-rose-500 text-white flex items-center justify-center">
+              {unreadCount}
+            </span>
+          )}
+        </button>
+
+        {openNotif && (
+          <div className="absolute right-0 mt-2 w-80 bg-white border border-gray-100 shadow-lg rounded-lg p-3 z-50 animate-slideDown">
+            <div className="flex items-center justify-between">
+              <h4 className="font-medium text-gray-800">Notifications</h4>
+              <div className="flex items-center gap-2">
+                <button
+                  className="text-xs px-2 py-1 rounded-md hover:bg-gray-100"
+                  onClick={() => markAllRead()}
+                >
+                  Mark all read
+                </button>
+                <button
+                  className="p-1 rounded-md hover:bg-gray-100 cursor-pointer"
+                  onClick={() => setOpenNotif(false)}
+                  aria-label="Close"
+                >
+                  <X className="w-4 h-4 text-gray-500" />
+                </button>
+              </div>
+            </div>
+
+            <div className="mt-3">
+              {notifications.length === 0 ? (
+                <div className="text-sm text-gray-500">No notifications</div>
+              ) : (
+                <ul className="space-y-2 max-h-56 overflow-auto">
+                  {notifications.map((n) => (
+                    <li
+                      key={n.id}
+                      className={`flex items-start gap-3 p-2 rounded-md ${n.read ? 'bg-white' : 'bg-amber-50'}`}
+                    >
+                      <div className="w-9 h-9 rounded-full bg-gray-100 grid place-items-center text-xs font-semibold text-gray-600">
+                        {/* short icon / initials */}
+                        🔔
+                      </div>
+
+                      <div className="flex-1">
+                        <Link href={n.href ?? '#'} onClick={() => { markRead(n.id); setOpenNotif(false); }}>
+                          <div className="text-sm font-medium text-gray-800">{n.title}</div>
+                          {n.body && <div className="text-xs text-gray-500 line-clamp-2">{n.body}</div>}
+                        </Link>
+                        <div className="text-[11px] text-gray-400 mt-1">{new Date(n.createdAt).toLocaleString()}</div>
+                      </div>
+
+                      <div className="flex items-start">
+                        {!n.read && (
+                          <button
+                            className="text-xs text-rose-600 ml-2"
+                            onClick={() => {
+                              markRead(n.id);
+                            }}
+                          >
+                            Mark
+                          </button>
+                        )}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+
+            {notifications.length > 0 && (
+              <div className="mt-3 flex justify-between items-center">
+                <button
+                  className="text-xs text-gray-600 hover:underline"
+                  onClick={() => {
+                    toast('Go to notifications (implement)');
+                    setOpenNotif(false);
+                  }}
+                >
+                  View all
+                </button>
+                <button
+                  className="text-xs text-rose-500 cursor-pointer"
+                  onClick={() => clearNotifications()}
+                >
+                  Clear
+                </button>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
       {/* === USER ICON & DROPDOWN === */}
       <div className="relative" ref={userRef}>
         <button
@@ -268,13 +427,13 @@ export default function CartsMenu() {
             setOpenUser((v) => !v);
             setOpenCart(false);
             setOpenWish(false);
+            setOpenNotif(false);
           }}
           onKeyDown={(e) => {
             if (e.key === 'Enter' || e.key === ' ') setOpenUser((v) => !v);
           }}
           title="Account"
         >
-          {/* small avatar */}
           <div className="w-8 h-8 rounded-full overflow-hidden bg-purple-400">
             <Image src={fakeUser.avatar} alt={fakeUser.name} width={32} height={32} className="object-cover" />
           </div>
