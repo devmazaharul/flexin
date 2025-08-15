@@ -72,9 +72,9 @@ export default function SearchMenu({
       <div
         className="
           group flex items-center gap-2 w-full
-          rounded-md border border-gray-200 bg-gray-100/30
+          rounded-xl border border-gray-200 bg-gray-100/30
           px-3 py-1 shadow-2xl
-          focus-within:ring-2 focus-within:ring-gray-400
+          focus-within:ring-2 focus-within:ring-gray-300
           transition-all duration-200
           hover:bg-white hover:border-gray-300
           dark:bg-zinc-900 dark:border-zinc-800 dark:hover:bg-zinc-900/80 dark:focus-within:ring-gray-500
@@ -132,7 +132,7 @@ export default function SearchMenu({
           type="submit"
           className="
             hidden sm:inline-flex items-center gap-1 text-xs font-medium
-            px-2.5 py-1.5 rounded-full
+            px-2.5 py-1.5 rounded-xl cursor-pointer
             bg-gray-600 text-white hover:bg-gray-700 active:scale-95 transition
             disabled:opacity-60 disabled:cursor-not-allowed
           "

@@ -45,40 +45,89 @@ export default function CartsMenu() {
 
   // notification state
   const [openNotif, setOpenNotif] = useState(false);
-  const [notifications, setNotifications] = useState<NotificationItem[]>([
-    {
-      id: 'n1',
-      title: 'Order #1234 shipped',
-      body: 'Your order is on the way. Track it from your orders page.',
-      createdAt: new Date().toISOString(),
-      read: false,
-      href: '/orders/1234',
-    },
-    {
-      id: 'n3',
-      title: 'New discount on selected items',
-      body: 'Up to 20% off on accessories this week.',
-      createdAt: new Date().toISOString(),
-      read: false,
-      href: '/collections/accessories',
-    },
-    {
-      id: 'n4',
-      title: 'Payment cancel',
-      body: 'Up to 20% off on accessories this week.',
-      createdAt: new Date().toISOString(),
-      read: false,
-      href: '/collections/accessories',
-    },
-    {
-      id: 'n2',
-      title: 'sucessfully complete paymenT',
-      body: 'Up to 20% off on accessories this week.',
-      createdAt: new Date().toISOString(),
-      read: false,
-      href: '/collections/accessories',
-    },
-  ]);
+const [notifications, setNotifications] = useState<NotificationItem[]>([
+  {
+    id: 'n1',
+    title: 'Order #1234 shipped',
+    body: 'Your order is on the way. Track it from your orders page.',
+    createdAt: new Date().toISOString(),
+    read: false,
+    href: '/orders/1234',
+  },
+  {
+    id: 'n2',
+    title: 'New discount on selected items',
+    body: 'Up to 20% off on accessories this week.',
+    createdAt: new Date().toISOString(),
+    read: true,
+    href: '/collections/accessories',
+  },
+  {
+    id: 'n3',
+    title: 'Payment canceled',
+    body: 'Your recent payment has been canceled. Please try again.',
+    createdAt: new Date().toISOString(),
+    read: false,
+    href: '/payments/history',
+  },
+  {
+    id: 'n4',
+    title: 'Successfully completed payment',
+    body: 'Your payment was successful. Thank you for your purchase!',
+    createdAt: new Date().toISOString(),
+    read: true,
+    href: '/orders/5678',
+  },
+  {
+    id: 'n5',
+    title: 'New message from support',
+    body: 'Our support team has replied to your request.',
+    createdAt: new Date().toISOString(),
+    read: false,
+    href: '/support/tickets/123',
+  },
+  {
+    id: 'n6',
+    title: 'Weekly newsletter',
+    body: 'Check out the latest updates and offers this week.',
+    createdAt: new Date().toISOString(),
+    read: true,
+    href: '/news',
+  },
+  {
+    id: 'n7',
+    title: 'Order #9876 delivered',
+    body: 'Your order has been delivered successfully.',
+    createdAt: new Date().toISOString(),
+    read: false,
+    href: '/orders/9876',
+  },
+  {
+    id: 'n8',
+    title: 'Stock alert: Item back in stock',
+    body: 'The item you wanted is now available again.',
+    createdAt: new Date().toISOString(),
+    read: true,
+    href: '/products/abc123',
+  },
+  {
+    id: 'n9',
+    title: 'Referral bonus earned',
+    body: 'You earned a bonus for referring a friend!',
+    createdAt: new Date().toISOString(),
+    read: false,
+    href: '/rewards',
+  },
+  {
+    id: 'n10',
+    title: 'Security alert: New login detected',
+    body: 'A new login to your account was detected.',
+    createdAt: new Date().toISOString(),
+    read: true,
+    href: '/account/security',
+  },
+]);
+
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -415,7 +464,7 @@ export default function CartsMenu() {
                     <li
                       key={n.id}
                       className={`flex items-start gap-3 p-2 rounded-md ${
-                        n.read ? 'bg-white' : 'bg-amber-50'
+                        n.read ? 'bg-white' : 'bg-amber-50/70'
                       }`}
                     >
                       <div className="w-9 h-9 rounded-full bg-gray-100 grid place-items-center text-xs font-semibold text-gray-600">
