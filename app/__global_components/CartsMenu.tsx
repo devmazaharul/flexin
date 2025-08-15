@@ -306,7 +306,7 @@ export default function CartsMenu() {
       </div>
 
       {/* === NOTIFICATION ICON & DROPDOWN === */}
-      <div className="relative hidden md:block" ref={notifRef}>
+      <div className="relative " ref={notifRef}>
         <button
           className="relative p-2 cursor-pointer rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
           aria-haspopup="menu"
