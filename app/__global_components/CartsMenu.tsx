@@ -361,7 +361,9 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
                       key={item.id ?? item}
                       className="flex items-center justify-between"
                     >
-                      <div className="text-sm text-gray-800">{item.name}</div>
+                      <div className="text-sm text-gray-800">
+                        <Link href={`/products/${item.slug}`}>{item.name}</Link>
+                      </div>
                       <div className="flex items-center gap-2">
                         <button
                           className="text-xs text-rose-600 hover:underline cursor-pointer"

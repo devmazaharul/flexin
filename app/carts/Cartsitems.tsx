@@ -8,6 +8,7 @@ import { toast } from 'sonner';
 import { useCartStore } from '@/hook/persist'; // adjust path
 import { Button } from '@/components/ui/button';
 import { addToCartitems } from '@/types/product';
+import { appConfig } from '@/constant/app.config';
 
 export default function CartItems() {
   const cartStore = useCartStore();
@@ -17,10 +18,6 @@ export default function CartItems() {
   const increment = cartStore.increment;
   const decrement = cartStore.decrement;
   const remove = cartStore.removeFromCart;
-  const clear = cartStore.clearCart;
-
-  // UI state
-  const [processingItem, setProcessingItem] = useState<string | null>(null);
 
   // remove confirmation
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
@@ -41,7 +38,7 @@ export default function CartItems() {
     () => cart.reduce((s, it) => s + (it.price || 0) * (it.quantity || 0), 0),
     [cart]
   );
-  const shippingEstimate = subtotal > 200 ? 0 : 5; // example rule
+  const shippingEstimate = subtotal > appConfig.carts.FEES_MIN_AMOUNT ? 0 : 5; // example rule
   const total = Math.max(0, subtotal + shippingEstimate);
 
   function handleIncrement(it: addToCartitems) {
@@ -50,22 +47,13 @@ export default function CartItems() {
       toast.warning(`Only ${it.stock} in stock`);
       return;
     }
-    setProcessingItem(it.id);
-    try {
-      increment(it.id);
-    } finally {
-      setProcessingItem(null);
-    }
+    increment(it.id);
   }
 
   function handleDecrement(it: addToCartitems) {
     if (!decrement) return;
-    setProcessingItem(it.id);
-    try {
-      decrement(it.id);
-    } finally {
-      setProcessingItem(null);
-    }
+
+    decrement(it.id);
   }
 
   function handleRemove(id: string) {
@@ -84,12 +72,6 @@ export default function CartItems() {
 
   function cancelRemove() {
     setConfirmRemoveId(null);
-  }
-
-  function handleClearCart() {
-    if (!clear) return;
-    clear();
-    toast.success('Cart cleared');
   }
 
   // Empty state
@@ -126,7 +108,7 @@ export default function CartItems() {
             {cart.map((it) => (
               <article
                 key={it.id}
-                className="flex gap-4 items-start border  border-gray-200/50 cursor-pointer rounded-lg p-3 hover:shadow-2xl hover:shadow-gray-100 transition"
+                className="flex gap-4 items-start border  border-gray-200/50 cursor-pointer rounded-lg p-3 hover:shadow-2xl hover:shadow-gray-100/60 transition"
               >
                 <div className="w-24 h-24 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
                   {it.imageUrl ? (
@@ -168,13 +150,13 @@ export default function CartItems() {
                   </div>
 
                   {/* Quantity controls */}
-                  <div className="flex items-center   ">
+                  <div className="flex items-center mt-4  ">
                     <div className=" flex items-center gap-1">
                       <button
                         aria-label={`Decrease quantity of ${it.name}`}
                         onClick={() => handleDecrement(it)}
                         className="p-2 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-50"
-                        disabled={processingItem === it.id || it.quantity <= 1}
+                        disabled={it.quantity <= 1}
                       >
                         <Minus size={14} />
                       </button>
@@ -188,9 +170,8 @@ export default function CartItems() {
                         onClick={() => handleIncrement(it)}
                         className="p-2 border border-gray-200 rounded-md cursor-pointer hover:bg-gray-50"
                         disabled={
-                          processingItem === it.id ||
-                          (typeof it.stock === 'number' &&
-                            it.quantity >= it.stock)
+                          typeof it.stock === 'number' &&
+                          it.quantity >= it.stock
                         }
                       >
                         <Plus size={14} />
@@ -217,20 +198,10 @@ export default function CartItems() {
               </article>
             ))}
           </div>
-
-          <div className="mt-4 flex items-center justify-between gap-3">
-            <Button
-              variant={'link'}
-              onClick={() => handleClearCart()}
-              className="text-sm text-rose-600 hover:underline cursor-pointer"
-            >
-              Clear cart
-            </Button>
-          </div>
         </section>
 
         {/* Summary */}
-        <aside className="rounded-lg border border-gray-200/70 p-5  h-fit">
+        <aside className="rounded-lg shadow-xl shadow-gray-50 border border-gray-200/70 p-5  h-fit">
           <div className="mb-4">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-600">Subtotal</div>
@@ -244,32 +215,30 @@ export default function CartItems() {
               </div>
             </div>
 
-            <div className="border-t mt-3 pt-3 flex items-center justify-between">
+            <div className="border-t border-gray-200/60 mt-3 pt-3 flex items-center justify-between">
               <div className="text-sm font-semibold">Total</div>
               <div className="text-xl font-bold">{fmt.format(total)}</div>
             </div>
           </div>
 
-          <div className="space-y-2">
+          <div>
             <Link
-              href="/checkout"
-              onClick={() =>
-                toast('Proceeding to checkout — implement your flow')
-              }
+              href="/products"
+              className="block  w-full text-center text-md py-2 rounded-md"
             >
-              <Button
-                variant={'outline'}
-                className="w-full cursor-pointer text-white bg-gray-700  hover:bg-gray-500 hover:text-white"
-              >
+              <Button variant={'default'} className="w-full cursor-pointer ">
+                {' '}
                 Checkout
               </Button>
             </Link>
-
             <Link
               href="/products"
-              className="block my-2  w-full text-center text-md py-2 rounded-md"
+              className="block   w-full text-center text-md py-2 rounded-md"
             >
-              <Button variant={'secondary'} className="w-full cursor-pointer hover:bg-gray-50">
+              <Button
+                variant={'secondary'}
+                className="w-full cursor-pointer hover:bg-gray-50"
+              >
                 {' '}
                 Continue shopping
               </Button>
@@ -296,7 +265,11 @@ export default function CartItems() {
           >
             <div className="flex items-start justify-between">
               <h3 className="text-lg font-semibold">Remove item</h3>
-              <button className="p-1 cursor-pointer" onClick={cancelRemove} aria-label="Close">
+              <button
+                className="p-1 cursor-pointer"
+                onClick={cancelRemove}
+                aria-label="Close"
+              >
                 <X />
               </button>
             </div>
@@ -315,8 +288,8 @@ export default function CartItems() {
               <Button
                 ref={confirmButtonRef}
                 onClick={confirmRemove}
-                className='cursor-pointer'
-               variant={"destructive"}
+                className="cursor-pointer"
+                variant={'destructive'}
               >
                 Remove
               </Button>

@@ -40,5 +40,8 @@ export const appConfig = Object.freeze({
     DESCRIPTION_LEN_MAX:100,
     SIZE_LEN_MAX:5,
     COLOR_LEN_MAX:5,
+  },
+  carts:{
+    FEES_MIN_AMOUNT:200
   }
 });

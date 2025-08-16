@@ -11,6 +11,7 @@ export default function NotFound() {
       <p className="text-md text-gray-600 mb-8">
         Oops! The page you’re looking for doesn’t exist.
       </p>
+      
 
       <Link href="/">
         <Button variant={'default'} className='cursor-pointer'>
