@@ -1,7 +1,10 @@
 import React from 'react'
+import CheckoutForm from './Checkoutform'
 
 export default function page() {
   return (
-    <div>page</div>
+    <div>
+      <CheckoutForm/>
+    </div>
   )
 }
