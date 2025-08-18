@@ -67,7 +67,7 @@ export default function BetterCheckout() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
       {/* Progress header */}
-      <ol className="mb-8 flex items-center gap-4 text-sm">
+      <ol className="mb-8 flex hidden md:block items-center gap-4 text-sm">
         {[
           ['Cart', true],
           ['Address', true],
