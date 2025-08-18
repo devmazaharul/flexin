@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
-
+import toast from '@/components/ui/sonner'
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckoutFormValues, checkoutSchema } from '@/schema/order';
 
@@ -61,7 +61,7 @@ export default function BetterCheckout() {
     };
     // এখানে তোমার API call করবে (e.g., await placeOrder(payload))
     console.log('ORDER PAYLOAD →', payload);
-    alert('Order placed 🎉 (check console for payload)');
+    toast.success('Order placed 🎉 (check console for payload)');
   };
 
   return (
