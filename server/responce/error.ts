@@ -1,4 +1,3 @@
-import logger from "../log/setup";
 
 class AppError extends Error {
   public status: number;
@@ -12,7 +11,7 @@ class AppError extends Error {
 export const handleError = (error: unknown) => {
   if (error instanceof AppError) {
     const appError = error as AppError;
-        logger.error(`Error type [${appError.name}] - Error message [${appError.message}]`)
+        // logger.error(`Error type [${appError.name}] - Error message [${appError.message}]`)
     return {
       name:appError.name,
       message:appError.message || 'An error occurred',
@@ -23,7 +22,7 @@ export const handleError = (error: unknown) => {
       message: string;
       status: number;
     };
-    logger.error(`Error type [Error] - Error message ${othersError.message}`)
+    // logger.error(`Error type [Error] - Error message ${othersError.message}`)
     return `${othersError.message || "An error occurred"}-${othersError.status || 400}`;
   }
 };

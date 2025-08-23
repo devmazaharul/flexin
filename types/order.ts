@@ -2,7 +2,6 @@ import { $Enums } from '@prisma/client';
 
 export interface orderProductState {
   id: string;
-  price: number;
   quantity:number
 }
 

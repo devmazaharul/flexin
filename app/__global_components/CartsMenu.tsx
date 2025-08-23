@@ -45,89 +45,88 @@ export default function CartsMenu() {
 
   // notification state
   const [openNotif, setOpenNotif] = useState(false);
-const [notifications, setNotifications] = useState<NotificationItem[]>([
-  {
-    id: 'n1',
-    title: 'Order #1234 shipped',
-    body: 'Your order is on the way. Track it from your orders page.',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/orders/1234',
-  },
-  {
-    id: 'n2',
-    title: 'New discount on selected items',
-    body: 'Up to 20% off on accessories this week.',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/collections/accessories',
-  },
-  {
-    id: 'n3',
-    title: 'Payment canceled',
-    body: 'Your recent payment has been canceled. Please try again.',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/payments/history',
-  },
-  {
-    id: 'n4',
-    title: 'Successfully completed payment',
-    body: 'Your payment was successful. Thank you for your purchase!',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/orders/5678',
-  },
-  {
-    id: 'n5',
-    title: 'New message from support',
-    body: 'Our support team has replied to your request.',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/support/tickets/123',
-  },
-  {
-    id: 'n6',
-    title: 'Weekly newsletter',
-    body: 'Check out the latest updates and offers this week.',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/news',
-  },
-  {
-    id: 'n7',
-    title: 'Order #9876 delivered',
-    body: 'Your order has been delivered successfully.',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/orders/9876',
-  },
-  {
-    id: 'n8',
-    title: 'Stock alert: Item back in stock',
-    body: 'The item you wanted is now available again.',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/products/abc123',
-  },
-  {
-    id: 'n9',
-    title: 'Referral bonus earned',
-    body: 'You earned a bonus for referring a friend!',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/rewards',
-  },
-  {
-    id: 'n10',
-    title: 'Security alert: New login detected',
-    body: 'A new login to your account was detected.',
-    createdAt: new Date().toISOString(),
-    read: false,
-    href: '/account/security',
-  },
-]);
-
+  const [notifications, setNotifications] = useState<NotificationItem[]>([
+    {
+      id: 'n1',
+      title: 'Order #1234 shipped',
+      body: 'Your order is on the way. Track it from your orders page.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/orders/1234',
+    },
+    {
+      id: 'n2',
+      title: 'New discount on selected items',
+      body: 'Up to 20% off on accessories this week.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/collections/accessories',
+    },
+    {
+      id: 'n3',
+      title: 'Payment canceled',
+      body: 'Your recent payment has been canceled. Please try again.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/payments/history',
+    },
+    {
+      id: 'n4',
+      title: 'Successfully completed payment',
+      body: 'Your payment was successful. Thank you for your purchase!',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/orders/5678',
+    },
+    {
+      id: 'n5',
+      title: 'New message from support',
+      body: 'Our support team has replied to your request.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/support/tickets/123',
+    },
+    {
+      id: 'n6',
+      title: 'Weekly newsletter',
+      body: 'Check out the latest updates and offers this week.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/news',
+    },
+    {
+      id: 'n7',
+      title: 'Order #9876 delivered',
+      body: 'Your order has been delivered successfully.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/orders/9876',
+    },
+    {
+      id: 'n8',
+      title: 'Stock alert: Item back in stock',
+      body: 'The item you wanted is now available again.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/products/abc123',
+    },
+    {
+      id: 'n9',
+      title: 'Referral bonus earned',
+      body: 'You earned a bonus for referring a friend!',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/rewards',
+    },
+    {
+      id: 'n10',
+      title: 'Security alert: New login detected',
+      body: 'A new login to your account was detected.',
+      createdAt: new Date().toISOString(),
+      read: false,
+      href: '/account/security',
+    },
+  ]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -143,7 +142,8 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
       if (cartRef.current && !cartRef.current.contains(el)) setOpenCart(false);
       if (wishRef.current && !wishRef.current.contains(el)) setOpenWish(false);
       if (userRef.current && !userRef.current.contains(el)) setOpenUser(false);
-       if (notifRef.current && !notifRef.current.contains(el)) setOpenNotif(false);
+      if (notifRef.current && !notifRef.current.contains(el))
+        setOpenNotif(false);
     }
 
     window.addEventListener('click', handler);
@@ -288,16 +288,12 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
                   .toFixed(0)}
               </div>
               <div className="flex items-center gap-2">
-                <button
-                  className="text-xs px-2 py-1 rounded-md hover:bg-gray-100 cursor-pointer"
-                 
-                >
+                <button className="text-xs px-2 py-1 rounded-md hover:bg-gray-100 cursor-pointer">
                   <Link href={'/carts'}> View</Link>
                 </button>
                 <button
                   className="text-xs bg-rose-500 text-white px-3 py-1 rounded-sm hover:opacity-95 cursor-pointer"
                   onClick={() => {
-                    toast('Checkout flow (implement)');
                     setOpenCart(false);
                   }}
                 >
@@ -384,7 +380,6 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
               <button
                 className="text-xs text-gray-600 hover:underline cursor-pointer"
                 onClick={() => {
-                  toast('Go to wishlist (implement)');
                   setOpenWish(false);
                 }}
               >
@@ -514,7 +509,6 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
                 <button
                   className="text-xs text-gray-600 hover:underline"
                   onClick={() => {
-                    toast('Go to notifications (implement)');
                     setOpenNotif(false);
                   }}
                 >
@@ -584,7 +578,6 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
               <button
                 className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
                 onClick={() => {
-                  toast('Go to profile (implement)');
                   setOpenUser(false);
                 }}
               >
@@ -595,7 +588,6 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
               <button
                 className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
                 onClick={() => {
-                  toast('Go to settings (implement)');
                   setOpenUser(false);
                 }}
               >
@@ -606,7 +598,6 @@ const [notifications, setNotifications] = useState<NotificationItem[]>([
               <button
                 className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm text-rose-600"
                 onClick={() => {
-                  toast('Logged out (implement)');
                   setOpenUser(false);
                 }}
               >

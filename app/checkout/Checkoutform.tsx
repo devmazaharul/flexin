@@ -9,6 +9,10 @@ import { useForm } from 'react-hook-form';
 
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckoutFormValues, checkoutSchema } from '@/schema/order';
+import { orderProcess } from '@/server/controllers/order';
+import { PaymentMethod } from '@prisma/client';
+import { toast } from 'sonner';
+import AppError from '@/server/responce/error';
 
 export default function BetterCheckout() {
   const cartStore = useCartStore();
@@ -39,7 +43,6 @@ export default function BetterCheckout() {
 
   const shipping = watch('shipping');
   const payment = watch('payment');
-  const agreed = watch('agreed');
 
   const subtotal = useMemo(
     () => items.reduce((s, it) => s + it.price * it.quantity, 0),
@@ -48,26 +51,30 @@ export default function BetterCheckout() {
   const shippingFee = shipping === 'express' ? 7 : 0;
   const total = Math.max(0, subtotal + shippingFee);
 
-  const onSubmit = (data: CheckoutFormValues) => {
-    const payload = {
-      ...data,
-      items: items.map((it) => ({
-        id: it.id,
-        name: it.name,
-        quantity: it.quantity,
-        price: it.price,
-      })),
-      amounts: { subtotal, shippingFee, total },
-    };
-    // এখানে তোমার API call করবে (e.g., await placeOrder(payload))
-    console.log('ORDER PAYLOAD →', payload);
-    alert('Order placed 🎉 (check console for payload)');
+  const onSubmit = async (data: CheckoutFormValues) => {
+    try {
+      const addOrder = await orderProcess({
+      userId: 'cmemoty2w0000ty8girc7v6nu',
+      OrderItems: [...items],
+      Payment: {
+        paymentMethod: data.payment as PaymentMethod,
+      },
+    });
+
+    if (addOrder.status !== 200) throw new AppError({
+      message:addOrder.message
+    })
+    toast.success("Successfully order place")
+    } catch (error) {
+      toast.error("Error occourd to place order")
+    }
+
   };
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
       {/* Progress header */}
-      <ol className="mb-8 flex items-center gap-4 text-sm">
+      <ol className="mb-8 md:flex items-center gap-4 text-sm hidden">
         {[
           ['Cart', true],
           ['Address', true],
@@ -152,7 +159,7 @@ export default function BetterCheckout() {
                 </Field>
 
                 <Field label="Post code" required>
-                  <Input  placeholder="1205" {...register('postCode')} />
+                  <Input placeholder="1205" {...register('postCode')} />
                   <ErrorText msg={errors.postCode?.message} />
                 </Field>
 
@@ -201,7 +208,7 @@ export default function BetterCheckout() {
           <Card>
             <CardHeader title="Payment" subtitle="Select a payment method." />
             <div className="grid gap-3">
-                  <RadioRow
+              <RadioRow
                 name="payment"
                 title="Cash on Delivery"
                 desc="Pay in cash when you receive the package."
@@ -238,7 +245,6 @@ export default function BetterCheckout() {
                   })
                 }
               />
-          
             </div>
           </Card>
 
@@ -248,7 +254,7 @@ export default function BetterCheckout() {
               <input
                 id="agree"
                 type="checkbox"
-                className="mt-1 h-4 w-4 rounded border-gray-300"
+                className="mt-1 h-4 w-4 rounded border-gray-300 cursor-pointer"
                 {...register('agreed')}
               />
               <Label htmlFor="agree" className="text-sm text-gray-700">

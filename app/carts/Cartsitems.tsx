@@ -78,7 +78,7 @@ export default function CartItems() {
   if (cart.length === 0) {
     return (
       <main className="container mx-auto px-4 py-16">
-        <div className="max-w-3xl mx-auto text-center bg-white border border-gray-200/60 shadow-2xl shadow-gray-100/60 rounded-2xl p-10">
+        <div className="max-w-3xl mx-auto text-center p-10">
           <div className="text-6xl mb-4">🛒</div>
           <h1 className="text-2xl font-semibold mb-2">Your cart is empty</h1>
           <p className="text-sm text-gray-600 mb-6">
