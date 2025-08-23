@@ -108,7 +108,7 @@ export default function CartItems() {
             {cart.map((it) => (
               <article
                 key={it.id}
-                className="flex gap-4 items-start border  border-gray-200/50 cursor-pointer rounded-lg p-3 hover:shadow-2xl hover:shadow-gray-100/60 transition"
+                className="flex gap-4 items-start border  border-gray-100 cursor-pointer rounded-lg p-3 hover:shadow-2xl hover:shadow-gray-100/60 transition"
               >
                 <div className="w-24 h-24 rounded-md overflow-hidden bg-gray-100 flex-shrink-0">
                   {it.imageUrl ? (
@@ -201,7 +201,7 @@ export default function CartItems() {
         </section>
 
         {/* Summary */}
-        <aside className="rounded-lg shadow-xl shadow-gray-50 border border-gray-200/70 p-5  h-fit">
+        <aside className="rounded-lg shadow-xl shadow-gray-50 border border-gray-100 p-5  h-fit">
           <div className="mb-4">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-600">Subtotal</div>
@@ -223,7 +223,7 @@ export default function CartItems() {
 
           <div>
             <Link
-              href="/products"
+              href="/checkout"
               className="block  w-full text-center text-md py-2 rounded-md"
             >
               <Button variant={'default'} className="w-full cursor-pointer ">

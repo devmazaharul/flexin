@@ -6,12 +6,10 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Button } from '@/components/ui/button';
 import { useForm } from 'react-hook-form';
-
 import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckoutFormValues, checkoutSchema } from '@/schema/order';
 import { orderProcess } from '@/server/controllers/order';
 import { PaymentMethod } from '@prisma/client';
-
 import AppError from '@/server/responce/error';
 import { toast } from 'sonner';
 
@@ -45,6 +43,7 @@ export default function BetterCheckout() {
   const shipping = watch('shipping');
   const payment = watch('payment');
 
+
   const subtotal = useMemo(
     () => items.reduce((s, it) => s + it.price * it.quantity, 0),
     [items]
@@ -72,15 +71,18 @@ export default function BetterCheckout() {
 
   };
 
+
+
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
       {/* Progress header */}
       <ol className="mb-8 md:flex items-center gap-4 text-sm hidden">
         {[
-          ['Cart', true],
-          ['Address', true],
+          ['Cart', items.length>0 ],
+          ['Address', isValid],
           ['Payment', true],
-          ['Review', false],
+          ['Review', watch("agreed")],
         ].map(([label, done], i) => (
           <li key={i} className="flex items-center gap-2">
             <span
@@ -331,7 +333,7 @@ export default function BetterCheckout() {
               <Button
                 variant="default"
                 type="submit"
-                disabled={!isValid || isSubmitting}
+                disabled={!isValid || isSubmitting || items.length==0}
                 className={`btn-primary w-full ${
                   !isValid ? 'opacity-60 cursor-not-allowed' : ''
                 } cursor-pointer`}
@@ -353,7 +355,7 @@ export default function BetterCheckout() {
 
 function Card({ children }: { children: React.ReactNode }) {
   return (
-    <div className="rounded-2xl border border-gray-200/70 bg-white p-5 shadow-2xl shadow-gray-100 dark:border-gray-800 dark:bg-gray-900">
+    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl shadow-gray-100 dark:border-gray-800 dark:bg-gray-900">
       {children}
     </div>
   );
