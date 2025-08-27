@@ -11,25 +11,26 @@ interface partialType {
 }
 
 const allProduct = async (
-  filter: partialType
+  filter?: partialType
 ): Promise<ReturnType<typeof SuccessResponse<productItems[]>>> => {
   try {
     const whereCondition: any = {
       isActive: true,
     };
 
-    if (filter.isDiscount) {
+    if (filter?.isDiscount) {
       whereCondition.discount = { gt: 0 };
     }
 
-    if (filter.isFeature) {
+    if (filter?.isFeature) {
       whereCondition.isFeatured = true;
     }
 
     const products = await prisma.product.findMany({
-      where: whereCondition,
+      where: whereCondition && whereCondition,
       select: productResponceDB,
     });
+    console.log(products);
 
     return SuccessResponse<any>({
       message: 'All filtered products',
@@ -41,31 +42,47 @@ const allProduct = async (
   }
 };
 
-const singleProduct = async (
-  productid: string
+const findProductWithSlug = async (
+  slug: string
 ): Promise<ReturnType<typeof SuccessResponse<productItems>>> => {
   try {
-    const findSingleProduct = await prisma.product.findUnique({
-      where: { id: productid },
-      select: productResponceDB,
+    // find the product
+    const product = await prisma.product.findFirst({
+      where: {
+        slug: slug,
+      },
+      select: {
+        ...productResponceDB,
+        attributes: true,
+      },
     });
-    if (!singleProduct)
-      throw new AppError({
-        message: 'No product found',
-        status: 400,
-      });
-    if (!findSingleProduct?.isActive)
-      throw new AppError({
-        message: 'Invalid product id',
-      });
 
-    return SuccessResponse<any>({
+    if (!product || !product.isActive) {
+      throw new AppError({
+        message: 'No product found or product is inactive',
+        status: 404,
+      });
+    }
+
+    // Map attributes to match productItems type
+    const mappedProduct = {
+      ...product,
+      slug: product.slug ?? '', // Ensure slug is always a string
+      attributes: product.attributes.map((attr: any) => ({
+        id: Number(attr.id),
+        key: attr.key,
+        value: attr.value,
+      })),
+    };
+
+    return SuccessResponse<productItems>({
       message: 'Get product success',
       status: 200,
-      data: findSingleProduct,
+      data: mappedProduct,
     });
   } catch (error) {
     throw handleError(error);
+  
   }
 };
 
@@ -103,4 +120,4 @@ const craereProduct = async (
   }
 };
 
-export { allProduct, singleProduct, craereProduct };
+export { allProduct, findProductWithSlug, craereProduct };

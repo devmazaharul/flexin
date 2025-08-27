@@ -9,84 +9,8 @@ import {
   PaymentStatus,
   PaymentMethod,
 } from '@prisma/client';
+import { generateOrderId } from '@/utils/algorithm';
 
-// const createOrder = async (data: orderStateTypes) => {
-//   try {
-//       //await currentUserInfo()
-//     const { OrderItems, userId, Payment } = data;
-//     const totalPrice = OrderItems.reduce(
-//       (acc, curr) => acc + curr.price * curr.quantity,
-//       0
-//     );
-
-//     const trxID = 'trx_' + Math.random().toString(36).substring(2, 15); // Random trx id
-
-//     // First create the order and order items
-//     const orderNow = await prisma.order.create({
-//       data: {
-//         total: totalPrice,
-//         userId,
-//         OrderItems: {
-//           create: OrderItems.map((item) => ({
-//             quantity: item.quantity,
-//             price: item.price,
-//             productId: item.id, // assuming item.id is productId
-//           })),
-//         },
-//       },
-//       include: {
-//         OrderItems: {
-//           include: {
-//             product: true,
-//           },
-//         },
-//       },
-//     });
-
-//     // Then create payment entry depending on method
-//     let createdPayment;
-
-//     if (Payment === 'CASH_ON_DELIVERY') {
-//       createdPayment = await prisma.payment.create({
-//         data: {
-//           orderId: orderNow.id,
-//           amount: totalPrice,
-//           paymentMethod: Payment,
-//           transactionId: trxID,
-//         },
-//       });
-//     } else if (Payment === 'BKASH') {
-//       createdPayment = await prisma.payment.create({
-//         data: {
-//           orderId: orderNow.id,
-//           amount: totalPrice,
-//           paymentMethod: Payment,
-//           transactionId: trxID,
-//         },
-//       });
-//     } else if (Payment === 'MAZAPAY') {
-//       createdPayment = await prisma.payment.create({
-//         data: {
-//           orderId: orderNow.id,
-//           amount: totalPrice,
-//           paymentMethod: Payment,
-//           transactionId: trxID,
-//         },
-//       });
-//     }
-
-//     return {
-//       message: 'Order created successfully',
-//       status: 201,
-//       data: {
-//         ...orderNow,
-//         payment: createdPayment,
-//       },
-//     };
-//   } catch (error) {
-//     throw handleError(error);
-//   }
-// };
 
 const cancelOrder = async (
   orderid: string
@@ -224,8 +148,9 @@ const orderProcess = async (data: orderStateTypes) => {
       const order = await tx.order.create({
         data: {
           userId,
+          orderID:generateOrderId(),
           total,
-          status: OrderStatus.PENDING,
+          status: OrderStatus.PROCESSING,
           OrderItems: {
             create: orderItemsCreate,
           },
@@ -234,13 +159,8 @@ const orderProcess = async (data: orderStateTypes) => {
       });
 
       // 8) Payment create (যদি থাকে অথবা COD placeholder)
-      const paymentMethod =
-        Payment?.paymentMethod ?? PaymentMethod.CASH_ON_DELIVERY;
-      const transactionId =
-        paymentMethod === PaymentMethod.CASH_ON_DELIVERY
-          ? `COD-${order.id}`
-          : Payment?.transactionId ??
-            (() => {
+      const paymentMethod = Payment?.paymentMethod ?? PaymentMethod.CASH_ON_DELIVERY;
+      const transactionId = paymentMethod === PaymentMethod.CASH_ON_DELIVERY ? `COD-${order.id}`: Payment?.transactionId ??(() => {
               throw new AppError({
                 message: 'transactionId required for online payment',
               });
@@ -286,8 +206,34 @@ const orderProcess = async (data: orderStateTypes) => {
       })
     });
   } catch (error) {
-    throw handleError(error);
+    return handleError(error);
   }
 };
 
-export { cancelOrder, orderProcess };
+const getOrderInfoWithUserId=async(orderId:string)=>{
+    try {
+        if(!orderId) throw new AppError({
+          message:"Invalid user id"
+        })
+          const findOrder=await prisma.order.findUnique({
+            where:{
+              orderID:orderId,
+            },
+            include:{Payments:true,user:true}
+          })
+          if(!findOrder) throw new AppError({
+            message:"invalid order "
+          })
+
+          return SuccessResponse({
+            message:"successfully get order info",
+            status:200,
+            data:findOrder
+          })
+
+    } catch (error) {
+      return handleError(error)
+    }
+}
+
+export { cancelOrder, orderProcess,getOrderInfoWithUserId };

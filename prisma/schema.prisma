@@ -30,6 +30,7 @@ enum Role {
 model Product {
   id          String           @id @default(uuid())
   name        String
+  slug        String? @unique
   description String
   price       Float
   stock       Int
@@ -64,6 +65,7 @@ model ProductAttribute {
 //prisma schema for Order model
 model Order {
   id        String   @id @default(cuid())
+  orderID   String?  @unique
   userId    String
   user      User     @relation(fields: [userId], references: [id])
   total     Float

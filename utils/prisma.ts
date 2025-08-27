@@ -10,6 +10,7 @@ export const selectResponse = {
 export const productResponceDB = {
   id: true,
   name: true,
+  slug:true,
   description: true,
   price: true,
   imageUrl: true,

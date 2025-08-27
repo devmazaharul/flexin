@@ -10,12 +10,14 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { CheckoutFormValues, checkoutSchema } from '@/schema/order';
 import { orderProcess } from '@/server/controllers/order';
 import { PaymentMethod } from '@prisma/client';
-import AppError from '@/server/responce/error';
+import AppError, { globalErrorMessage } from '@/server/responce/error';
 import { toast } from 'sonner';
+import { useRouter } from 'next/navigation';
 
 export default function BetterCheckout() {
   const cartStore = useCartStore();
   const items = cartStore.cart;
+  const router = useRouter();
 
   const {
     register,
@@ -35,14 +37,13 @@ export default function BetterCheckout() {
       postCode: '',
       country: 'Bangladesh',
       shipping: 'standard',
-      payment: 'bkash',
+      payment: 'CASH_ON_DELIVERY',
       agreed: false,
     },
   });
 
   const shipping = watch('shipping');
   const payment = watch('payment');
-
 
   const subtotal = useMemo(
     () => items.reduce((s, it) => s + it.price * it.quantity, 0),
@@ -54,35 +55,35 @@ export default function BetterCheckout() {
   const onSubmit = async (data: CheckoutFormValues) => {
     try {
       const addOrder = await orderProcess({
-      userId: 'cmemoty2w0000ty8girc7v6nu',
-      OrderItems: [...items],
-      Payment: {
-        paymentMethod: data.payment as PaymentMethod,
-      },
-    });
+        userId: 'cmeqphwn90000tyegb78piu63',
+        OrderItems: [...items],
+        Payment: {
+          paymentMethod: data.payment as PaymentMethod,
+        },
+      });
 
-    if (addOrder.status !== 200) throw new AppError({
-      message:addOrder.message
-    })
-    toast.success("Successfully order place")
+      if (addOrder.status !== 200)
+        throw new AppError({
+          message: addOrder.message,
+        });
+      toast.success('Successfully order place');
+      cartStore.clearCart();
+      router.replace('/success');
     } catch (error) {
-      toast.error("Error occourd to place order")
+      const errMsg = globalErrorMessage(error);
+      toast.error(errMsg);
     }
-
   };
-
-
-
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
       {/* Progress header */}
       <ol className="mb-8 md:flex items-center gap-4 text-sm hidden">
         {[
-          ['Cart', items.length>0 ],
+          ['Cart', items.length > 0],
           ['Address', isValid],
           ['Payment', true],
-          ['Review', watch("agreed")],
+          ['Review', watch('agreed')],
         ].map(([label, done], i) => (
           <li key={i} className="flex items-center gap-2">
             <span
@@ -215,9 +216,9 @@ export default function BetterCheckout() {
                 name="payment"
                 title="Cash on Delivery"
                 desc="Pay in cash when you receive the package."
-                checked={payment === 'cod'}
+                checked={payment === 'CASH_ON_DELIVERY'}
                 onChange={() =>
-                  setValue('payment', 'cod', {
+                  setValue('payment', 'CASH_ON_DELIVERY', {
                     shouldDirty: true,
                     shouldValidate: true,
                   })
@@ -228,9 +229,9 @@ export default function BetterCheckout() {
                 title="bKash"
                 desc="Pay via bKash wallet."
                 leftBadge="Recommended"
-                checked={payment === 'bkash'}
+                checked={payment === 'BKASH'}
                 onChange={() =>
-                  setValue('payment', 'bkash', {
+                  setValue('payment', 'BKASH', {
                     shouldDirty: true,
                     shouldValidate: true,
                   })
@@ -240,9 +241,9 @@ export default function BetterCheckout() {
                 name="payment"
                 title="Pay via mazapay wallet."
                 desc="We accept Visa, Mastercard and Amex."
-                checked={payment === 'mazapay'}
+                checked={payment === 'MAZAPAY'}
                 onChange={() =>
-                  setValue('payment', 'mazapay', {
+                  setValue('payment', 'MAZAPAY', {
                     shouldDirty: true,
                     shouldValidate: true,
                   })
@@ -333,7 +334,7 @@ export default function BetterCheckout() {
               <Button
                 variant="default"
                 type="submit"
-                disabled={!isValid || isSubmitting || items.length==0}
+                disabled={!isValid || isSubmitting || items.length == 0}
                 className={`btn-primary w-full ${
                   !isValid ? 'opacity-60 cursor-not-allowed' : ''
                 } cursor-pointer`}

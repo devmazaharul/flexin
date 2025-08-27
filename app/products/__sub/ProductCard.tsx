@@ -56,7 +56,7 @@ export default function ProductCard({
       className="bg-white rounded-2xl overflow-hidden shadow-2xl shadow-[#e8eaed] hover:shadow-2xl transition-shadow duration-300 border border-gray-300/20"
     >
       <Link
-        href={`/products/${encodeURIComponent(slug || name.split(" ").join("-"))}`}
+        href={`/products/${encodeURIComponent(slug)}`}
         className="relative w-full h-56 bg-gray-50 flex items-center justify-center"
       >
         <Image

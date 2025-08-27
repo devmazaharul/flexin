@@ -10,7 +10,7 @@ const checkoutSchema = z.object({
   postCode: z.string().regex(postCodeRegex, 'Post code must be 4–5 digits'),
   country: z.string().min(2, 'Country is required'),
   shipping: z.enum(['standard', 'express']),
-  payment: z.enum(['bkash', 'cod', 'card', 'mazapay']),
+  payment: z.enum(['BKASH', 'CASH_ON_DELIVERY', 'MAZAPAY', 'NAGAD']),
 agreed: z.boolean().refine((val) => val === true, {
     message: "You must agree to continue",
   }),

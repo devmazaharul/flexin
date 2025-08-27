@@ -2,7 +2,7 @@ import Link from 'next/link';
 import React from 'react';
 import SearchMenu from './Search';
 import CartsMenu from './CartsMenu';
-import { Borel, Righteous } from 'next/font/google';
+import {  Righteous } from 'next/font/google';
 
 const logoFont = Righteous({
   style: 'normal',
