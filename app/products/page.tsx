@@ -14,7 +14,6 @@ export default function page() {
         title="Products"
         desc="Explore all available items at a glance"
       />
-
       <div>
         <Suspense fallback={<ProductsSkeletonGrid len={12} />}>
           <ProductsList />
