@@ -1,6 +1,6 @@
 // app/products/page.tsx
-// export const dynamic = 'force-dynamic'; // build-time static নয়
-// export const runtime = 'nodejs';        // Prisma Edge runtime সাপোর্ট করে না
+export const dynamic = 'force-dynamic'; // build-time static নয়
+export const runtime = 'nodejs';        // Prisma Edge runtime সাপোর্ট করে না
 
 import React, { Suspense } from 'react';
 import TopInfo from '../__global_components/TopInfo';
