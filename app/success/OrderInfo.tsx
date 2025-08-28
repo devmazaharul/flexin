@@ -97,9 +97,17 @@ export interface orderRes {
   data?:order
 }
 // Main component
-export default  function OrderSuccess({orderinfo}:{orderinfo:orderRes}) {
+export default  function OrderSuccess() {
 
-  const order=orderinfo.data
+  const order={
+    orderID:"ORD-280820259393",
+    status:"CONFIRMED",
+    Payments:{
+      status:"PENDING",
+      paymentMethod:"CASH_ON_DELEVERY"
+    }
+
+  }
 
   return (
     <div className="w-fit mx-auto px-4 py-10">
