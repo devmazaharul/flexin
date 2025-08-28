@@ -17,6 +17,7 @@ import { currentUserInfo } from '@/authentication/auth';
 import { selectResponse } from '@/utils/prisma';
 import { queueService } from '../queue/queue';
 import { queueJobName } from '@/types/others';
+import mailService from '../config/mail';
 
 const createUser = async (
   data: SignupType
@@ -50,29 +51,43 @@ const createUser = async (
       select: selectResponse,
     });
 
-   const addQ= await queueService.add(queueJobName.SEND_MAIL,{
-      to: user.email,
+    await mailService({
+      to: data.email,
       subject: 'Welcome to Our Service',
       additionalInfo: {
-        toName: user.name,
+        toName: data.name,
         fromName: 'Flexin Team',
-        bodyHtml: `<p>Hi ${user.name},</p><p>Thank you for signing up!</p>`,
+        bodyHtml: `<p>Hi ${data.name},</p><p>Thank you for signing up!</p>`,
         greeting: 'Welcome!',
         reason: 'We are excited to have you on board.',
         callToActionLink: `${appConfig.hostname.BASE_URL}/verify-email?token=someToken`,
         callToActionText: 'Verify your email',
         subject: 'Welcome to Our Service',
       },
-    })
+    });
 
+    //  const addQ= await queueService.add(queueJobName.SEND_MAIL,{
+    //     to: user.email,
+    //     subject: 'Welcome to Our Service',
+    //     additionalInfo: {
+    //       ,
+    //       fromName: 'Flexin Team',
+    //       bodyHtml: `<p>Hi ${user.name},</p><p>Thank you for signing up!</p>`,
+    //       greeting: 'Welcome!',
+    //       reason: 'We are excited to have you on board.',
+    //       callToActionLink: `${appConfig.hostname.BASE_URL}/verify-email?token=someToken`,
+    //       callToActionText: 'Verify your email',
+    //       subject: 'Welcome to Our Service',
+    //     },
+    //   })
 
     return SuccessResponse({
-      message: 'Account created successfully' + addQ.id,
+      message: 'Account created successfully',
       data: user,
       status: 201,
     });
   } catch (error) {
-    throw handleError(error); // rethrow so caller can handle
+    return handleError(error); // rethrow so caller can handle
   }
 };
 
@@ -138,7 +153,7 @@ const loginUser = async (
       data: safeUser,
     });
   } catch (error) {
-    throw handleError(error);
+    return handleError(error);
   }
 };
 
@@ -294,7 +309,6 @@ const changePassword = async (
     throw handleError(error);
   }
 };
-
 
 export {
   createUser,

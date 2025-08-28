@@ -30,7 +30,7 @@ const allProduct = async (
       where: whereCondition && whereCondition,
       select: productResponceDB,
     });
-    console.log(products);
+
 
     return SuccessResponse<any>({
       message: 'All filtered products',

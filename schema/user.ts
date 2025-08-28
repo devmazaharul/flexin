@@ -1,26 +1,39 @@
 import { appConfig } from '@/constant/app.config';
-import { string, z } from 'zod';
+import { z } from 'zod';
 
 const { inputForm } = appConfig;
 
-// This file contains validation schemas for user input forms using Zod
+// Signup validation schema
 const signupSchema = z.object({
-  name: string().min(inputForm.NAME_MIN_LENGTH).max(inputForm.NAME_MAX_LENGTH).toLowerCase().trim(),
-  email: string().email().max(inputForm.EMAIL_MAX_LENGTH).toLowerCase().trim(),
-  password: string()
-    .min(inputForm.PASSWORD_MIN_LENGTH)
-    .max(inputForm.PASSWORD_MAX_LENGTH).trim(),
+  name: z
+    .string()
+    .min(inputForm.NAME_MIN_LENGTH, `Name must be at least ${inputForm.NAME_MIN_LENGTH} characters`)
+    .max(inputForm.NAME_MAX_LENGTH, `Name must be at most ${inputForm.NAME_MAX_LENGTH} characters`)
+    .trim(),
+  email: z
+    .string()
+    .email('Invalid email address')
+    .max(inputForm.EMAIL_MAX_LENGTH, `Email must be at most ${inputForm.EMAIL_MAX_LENGTH} characters`)
+    .trim()
+    .toLowerCase(),
+  password: z
+    .string()
+    .min(inputForm.PASSWORD_MIN_LENGTH, `Password must be at least ${inputForm.PASSWORD_MIN_LENGTH} characters`)
+    .max(inputForm.PASSWORD_MAX_LENGTH, `Password must be at most ${inputForm.PASSWORD_MAX_LENGTH} characters`)
+    .trim(),
 });
 
-
-// Validation schema for user login
+// Login validation schema
 const loginSchema = z.object({
-  email: string().toLowerCase().email().max(inputForm.EMAIL_MAX_LENGTH).trim(),
-  password: string()
-    .min(inputForm.PASSWORD_MIN_LENGTH)
-    .max(inputForm.PASSWORD_MAX_LENGTH).trim(),
+  email: z
+    .string()
+    .email('Invalid email address')
+    .max(inputForm.EMAIL_MAX_LENGTH, `Email must be at most ${inputForm.EMAIL_MAX_LENGTH} characters`)
+    .trim()
+    .toLowerCase(),
+  password: z
+    .string().trim().min(1,'Please enter your password')
+
 });
-
-
 
 export { signupSchema, loginSchema };

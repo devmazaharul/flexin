@@ -14,7 +14,8 @@ export const handleError = (error: unknown) => {
         // logger.error(`Error type [${appError.name}] - Error message [${appError.message}]`)
     return {
       message:appError.message || 'An error occurred',
-      status:appError.status
+      status:appError.status,
+      data:{}
     }
   } else {
     const othersError = error as {
@@ -24,7 +25,8 @@ export const handleError = (error: unknown) => {
     // logger.error(`Error type [Error] - Error message ${othersError.message}`)
     return {
       message:othersError.message,
-      status:othersError.status || 400
+      status:othersError.status || 400,
+      data:{}
     }
   }
 };
