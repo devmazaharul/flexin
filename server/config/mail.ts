@@ -21,7 +21,7 @@ const EmailTemplate = ({
         <title>${subject}</title>
         <style>
             body {
-                font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+                font-family: 'monospace';
                 line-height: 1.6;
                 color: #333333;
                 background-color: #f4f4f4;
@@ -69,8 +69,8 @@ const EmailTemplate = ({
                 display: inline-block;
                 padding: 12px 25px;
                 margin: 0 auto;
-                background-color: #007bff; /* প্রাইমারি বাটন কালার */
-                color: #ffffff !important; /* !important ব্যবহার করা হয়েছে যাতে ক্লায়েন্টের ডিফল্ট স্টাইল ওভাররাইড না হয় */
+                background-color: #161712; 
+                color: #ffffff !important; 
                 text-decoration: none;
                 border-radius: 5px;
                 font-size: 16px;
@@ -78,7 +78,7 @@ const EmailTemplate = ({
                 transition: background-color 0.3s ease;
             }
             .button:hover {
-                background-color: #0056b3; /* হোভার কালার */
+                background-color: #2e2f2b; 
             }
             .footer {
                 text-align: center;

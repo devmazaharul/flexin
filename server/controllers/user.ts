@@ -65,9 +65,20 @@ const createUser = async (
       additionalInfo: {
         toName: data.name,
         fromName: 'Flexin Team',
-        bodyHtml: `<p>Hi ${data.name},</p><p>Thank you for signing up!</p>`,
+        bodyHtml: `<div>
+        <p>
+          Once your email is verified, you’ll unlock your full access to Flexin and all its features.
+        </p>
+
+        <p>
+          If you didn’t create this account, you can safely ignore this email.
+        </p>
+        </div>
+
+        <br/>`,
         greeting: 'Welcome!',
-        reason: 'We are excited to have you on board.',
+        reason:
+          ' Thank you for signing up to Flexin! We’re really excited to have you join our community.',
         callToActionLink: `${appConfig.hostname.BASE_URL}/verify?token=${verifyEmailtoken}`,
         callToActionText: 'Verify your email',
         subject: 'Welcome to Our Service',
@@ -99,19 +110,21 @@ const createUser = async (
   }
 };
 
-const loginUser = async (data: LoginType): Promise<ReturnType<typeof SuccessResponse>> => {
+const loginUser = async (
+  data: LoginType
+): Promise<ReturnType<typeof SuccessResponse>> => {
   try {
     // 1. Find user
     const userIfExist = await prisma.user.findFirst({
       where: { email: data.email },
-      select:{
-        name:true,
-        email:true,
-        isVerified:true,
-        password:true,
-        id:true,
-        role:true
-      }
+      select: {
+        name: true,
+        email: true,
+        isVerified: true,
+        password: true,
+        id: true,
+        role: true,
+      },
     });
 
     if (!userIfExist) {
@@ -161,7 +174,11 @@ const loginUser = async (data: LoginType): Promise<ReturnType<typeof SuccessResp
     });
 
     // 7. Return response
-    return SuccessResponse<{name:string;email:string;isVerified:boolean}>({
+    return SuccessResponse<{
+      name: string;
+      email: string;
+      isVerified: boolean;
+    }>({
       message: 'Account login success',
       status: 200,
       data: safeUser,
@@ -216,28 +233,28 @@ const verifyAccount = async (token: string) => {
       },
     });
 
-    if(!findUser) throw new AppError({
-      message:"Invalid token"
-    })
+    if (!findUser)
+      throw new AppError({
+        message: 'Invalid token',
+      });
 
-    if(findUser.isVerified) throw new AppError({
-      message:"Already verified account"
-    })
+    if (findUser.isVerified)
+      throw new AppError({
+        message: 'Already verified account',
+      });
 
-    const updateStatus=await prisma.user.update({
-      where:{email:email},
-      data:{isVerified:true}
-    })
+    const updateStatus = await prisma.user.update({
+      where: { email: email },
+      data: { isVerified: true },
+    });
 
     return SuccessResponse({
-      message:"successfully verified",
-      status:200,
-      data:{
-        name:name
-      }
-    })
-
-
+      message: 'successfully verified',
+      status: 200,
+      data: {
+        name: name,
+      },
+    });
   } catch (error) {
     return handleError(error);
   }
@@ -366,69 +383,65 @@ const changePassword = async (
   }
 };
 
-const logout=async()=>{
+const logout = async () => {
   try {
-       const cookie = await cookies();
-       const deleteToken=cookie.delete("authToken")
-        if(!deleteToken) throw new AppError({
-          message:"Error to logout oparation"
-        })
-        return SuccessResponse({
-          message:"Logout successfull",
-          status:200,
-          data:{}
-        })
+    const cookie = await cookies();
+    const deleteToken = cookie.delete('authToken');
+    if (!deleteToken)
+      throw new AppError({
+        message: 'Error to logout oparation',
+      });
+    return SuccessResponse({
+      message: 'Logout successfull',
+      status: 200,
+      data: {},
+    });
   } catch (error) {
-    return handleError(error)
+    return handleError(error);
   }
-}
+};
 
+const isLoggedInUser = async () => {
+  try {
+    const cookieObj = await cookies();
+    const hasLoggedIn = cookieObj.get('authToken');
+    if (!hasLoggedIn)
+      throw new AppError({
+        message: 'Access denied',
+      });
 
-const isLoggedInUser=async()=>{
+    const token = hasLoggedIn.value;
 
-try {
-    const cookieObj=await cookies()
-  const hasLoggedIn=cookieObj.get("authToken")
-  if(!hasLoggedIn) throw new AppError({
-    message:"Access denied"
-  })
+    const decode = jwtVerify(token) as {
+      id: string;
+    };
+    if (!decode)
+      throw new AppError({
+        message: 'Access denied',
+      });
 
-  const token=hasLoggedIn.value 
+    const isValidUser = await prisma.user.findUnique({
+      where: { id: decode.id },
+      select: {
+        name: true,
+        email: true,
+        isVerified: true,
+      },
+    });
+    if (!isValidUser)
+      throw new AppError({
+        message: 'Access denied',
+      });
 
-  const decode=jwtVerify(token) as {
-    id:string
+    return SuccessResponse({
+      message: 'Valid user',
+      status: 200,
+      data: isValidUser,
+    });
+  } catch (error) {
+    return handleError(error);
   }
-  if(!decode) throw new AppError({
-    message:"Access denied"
-  }) 
-
-  const isValidUser=await prisma.user.findUnique({
-    where:{id:decode.id},
-    select:{
-      name:true,
-      email:true,
-      isVerified:true
-    }
-  })
-  if(!isValidUser) throw new AppError({
-    message:"Access denied"
-  })
-
-  return SuccessResponse({
-    message:"Valid user",
-    status:200,
-    data:isValidUser
-  })
-
-
-
-} catch (error) {
-  return handleError(error)
-}
-  
-}
-
-
+};
 
 export {
   createUser,
@@ -439,5 +452,5 @@ export {
   changePassword,
   verifyAccount,
   logout,
-  isLoggedInUser
+  isLoggedInUser,
 };

@@ -79,7 +79,7 @@ const loginAuth=useAuthStore((item)=>item.authAdd)
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full border border-gray-100 mx-auto p-6 space-y-6 bg-white rounded-md shadow-2xl shadow-gray-100"
+          className="w-full  mx-auto p-6 space-y-6 "
         >
           <h1 className="text-2xl font-semibold text-center">Login</h1>
 
