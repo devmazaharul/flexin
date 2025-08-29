@@ -2,7 +2,7 @@ import AppError from '@/server/responce/error';
 import { jwtpayload } from '@/types/others';
 import jwt from 'jsonwebtoken';
 
-const jwtGenarate = (payload: jwtpayload) => {
+const jwtGenarate = (payload: jwtpayload,time:string='7d') => {
 
   const payloadData: jwtpayload = {
     id: payload.id,
@@ -10,7 +10,11 @@ const jwtGenarate = (payload: jwtpayload) => {
     role: payload.role,
   };
   
-  return jwt.sign(payloadData, process.env.JWT_SECRET as string);
+  return jwt.sign(
+    payloadData,
+    process.env.JWT_SECRET as string,
+    { expiresIn: time } as jwt.SignOptions
+  );
 };
 
 
@@ -18,7 +22,7 @@ const jwtVerify = (token:string) => {
   try {
    if(jwt.decode(token) === null) {
     throw new AppError({
-      message: 'Unauthorized user',
+      message: 'Unauthorized',
       status: 401,
     });
   }
@@ -26,15 +30,38 @@ const jwtVerify = (token:string) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET as string);
     return decoded;
   } catch (error) {
-    throw new AppError({
-      message: 'Unauthorized user',
+    
+    return new AppError({
+      message: 'Unauthorized',
       status: 401,
     });
   }
 };
 
 
+
+interface mailToken {
+  email:string;
+  name:string
+}
+
+const genarateEmailToken = (data: mailToken, time: string) => {
+    const payloadData = {
+    email: data.email,
+    name: data.name,
+  };
+
+ return jwt.sign(
+    payloadData,
+    process.env.JWT_SECRET as string,
+    { expiresIn: time } as jwt.SignOptions
+  );
+
+}
+
+
 export {
   jwtGenarate,
-  jwtVerify
+  jwtVerify,
+  genarateEmailToken
 }

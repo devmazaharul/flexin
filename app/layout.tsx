@@ -3,6 +3,9 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'sonner';
 import Header from './__global_components/Header';
+import { isLoggedInUser } from '@/server/controllers/user';
+
+
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -24,6 +27,9 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
+
+
   return (
     <html lang="en">
       <body

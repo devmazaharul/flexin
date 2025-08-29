@@ -15,6 +15,10 @@ import { toast } from 'sonner';
 import Image from 'next/image';
 import useWishStore from '@/hook/useWishStore';
 import Link from 'next/link';
+import { isLoggedInUser, logout } from '@/server/controllers/user';
+import { useRouter } from 'next/navigation';
+import { boolean } from 'zod';
+import { useAuthStore } from '@/hook/auth';
 
 type NotificationItem = {
   id: string;
@@ -26,6 +30,7 @@ type NotificationItem = {
 };
 
 export default function CartsMenu() {
+  const router = useRouter();
   const cartStore = useCartStore();
   const cartCount = cartStore.cart.reduce(
     (sum, item) => sum + (item.quantity || 0),
@@ -135,6 +140,8 @@ export default function CartsMenu() {
   const userRef = useRef<HTMLDivElement | null>(null);
   const notifRef = useRef<HTMLDivElement | null>(null);
 
+  const { isLoggedIn, user, authRemove } = useAuthStore();
+
   // click outside handler
   useEffect(() => {
     function handler(e: MouseEvent) {
@@ -195,6 +202,23 @@ export default function CartsMenu() {
     avatar:
       'https://newmazaharul.vercel.app/_next/image?url=https%3A%2F%2Famimazaharul.vercel.app%2F_next%2Fimage%3Furl%3D%252Fmaza-original_processed1.jpg%26w%3D640%26q%3D75&w=256&q=75',
     email: 'you@flexin.com',
+  };
+
+  const handleLogout = async () => {
+    try {
+      const conf = confirm('Are you sure?');
+      if (conf) {
+        const res = await logout();
+        if (res?.status == 200) {
+          toast.success(res.message);
+          authRemove();
+          router.push('/login');
+        }
+      }
+      setOpenUser(false);
+    } catch (error) {
+      toast.success('Eror logout');
+    }
   };
 
   return (
@@ -527,87 +551,90 @@ export default function CartsMenu() {
       </div>
 
       {/* === USER ICON & DROPDOWN === */}
-      <div className="relative" ref={userRef}>
-        <button
-          className="p-1 rounded-full cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
-          aria-haspopup="menu"
-          aria-expanded={openUser}
-          onClick={() => {
-            setOpenUser((v) => !v);
-            setOpenCart(false);
-            setOpenWish(false);
-            setOpenNotif(false);
-          }}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') setOpenUser((v) => !v);
-          }}
-          title="Account"
-        >
-          <div className="w-8 h-8 rounded-full overflow-hidden bg-purple-400">
-            <Image
-              src={fakeUser.avatar}
-              alt={fakeUser.name}
-              width={32}
-              height={32}
-              className="object-cover"
-            />
-          </div>
-        </button>
 
-        {openUser && (
-          <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-100 shadow-lg rounded-lg p-3 z-50 animate-slideDown">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-400">
-                <Image
-                  src={fakeUser.avatar}
-                  alt={fakeUser.name}
-                  width={40}
-                  height={40}
-                  className="object-cover"
-                />
-              </div>
-              <div>
-                <div className="text-sm font-medium text-gray-800">
-                  {fakeUser.name}
+      {isLoggedIn && user && (
+        <div className="relative" ref={userRef}>
+          <button
+            className="p-1 rounded-full cursor-pointer hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+            aria-haspopup="menu"
+            aria-expanded={openUser}
+            onClick={() => {
+              setOpenUser((v) => !v);
+              setOpenCart(false);
+              setOpenWish(false);
+              setOpenNotif(false);
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') setOpenUser((v) => !v);
+            }}
+            title="Account"
+          >
+            <div className="w-8 h-8 rounded-full overflow-hidden bg-purple-400">
+              <Image
+                src={fakeUser.avatar}
+                alt={fakeUser.name}
+                width={32}
+                height={32}
+                className="object-cover"
+              />
+            </div>
+          </button>
+
+          {openUser && (
+            <div className="absolute right-0 mt-2 w-52 bg-white border border-gray-100 shadow-lg rounded-lg p-3 z-50 animate-slideDown">
+              <div className="flex items-center gap-3">
+                <div className="w-10 h-10 rounded-full overflow-hidden bg-purple-400">
+                  <Image
+                    src={fakeUser.avatar}
+                    alt={fakeUser.name}
+                    width={40}
+                    height={40}
+                    className="object-cover"
+                  />
                 </div>
-                <div className="text-xs text-gray-500">{fakeUser.email}</div>
+                <div>
+                  <div className="text-sm font-medium text-gray-800">
+                    {user?.name}
+                  </div>
+                  <div className="text-xs text-gray-500">
+                    {user.email.slice(0, 4) + '...' + user.email.slice(11)}
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-3 grid gap-2">
+                <button
+                  className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
+                  onClick={() => {
+                    setOpenUser(false);
+                  }}
+                >
+                  <User className="w-4 h-4 text-gray-600" />
+                  Profile
+                </button>
+
+                <button
+                  className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
+                  onClick={() => {
+                    setOpenUser(false);
+                  }}
+                >
+                  <Settings className="w-4 h-4 text-gray-600" />
+                  Settings
+                </button>
+
+                <button
+                  className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm text-rose-600"
+                  onClick={handleLogout}
+                >
+                  <LogOut className="w-4 h-4 text-rose-600" />
+                  Logout
+                </button>
               </div>
             </div>
-
-            <div className="mt-3 grid gap-2">
-              <button
-                className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
-                onClick={() => {
-                  setOpenUser(false);
-                }}
-              >
-                <User className="w-4 h-4 text-gray-600" />
-                Profile
-              </button>
-
-              <button
-                className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
-                onClick={() => {
-                  setOpenUser(false);
-                }}
-              >
-                <Settings className="w-4 h-4 text-gray-600" />
-                Settings
-              </button>
-
-              <button
-                className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm text-rose-600"
-                onClick={() => {
-                  setOpenUser(false);
-                }}
-              >
-                <LogOut className="w-4 h-4 text-rose-600" />
-                Logout
-              </button>
-            </div>
-          </div>
-        )}
-      </div>
+          )}
+        </div>
+      )}
 
       {/* small animations CSS (put in global CSS or tailwind config as plugin) */}
       <style jsx>{`

@@ -19,6 +19,7 @@ import { loginUser } from '@/server/controllers/user';
 import AppError from '@/server/responce/error';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useAuthStore } from '@/hook/auth';
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
@@ -33,33 +34,44 @@ export default function LoginForm() {
     },
   });
 
+//auth store
+const loginAuth=useAuthStore((item)=>item.authAdd)
+
   const onSubmit = async (values: LoginFormInputs) => {
     try {
       const { email, password } = values;
       const loginAction = await loginUser({ email, password });
-
       if (loginAction.status !== 200)
         throw new AppError({
           message: loginAction.message,
         });
 
       toast.success(loginAction.message);
-
-      // ✅ Redirect after successful login
-      router.push('/account'); // অথবা তুমি চাইলে হোম বা ড্যাশবোর্ড
+      const items=loginAction.data as {
+        name: string;
+        email: string;
+        isVerified: boolean;
+      }
+      const loginActionPayload={
+        name: items.name,
+        email: items.email,
+        isVerified: items.isVerified
+      }
+      loginAuth(loginActionPayload)
+      router.push('/account');
     } catch (error: unknown) {
-     if (error instanceof AppError) {
-      form.setError('root', { message: error.message });
-    } 
-    // If error is from fetch or any other source
-    else if (error instanceof Error) {
-      form.setError('root', { message: error.message });
-    } 
-    // fallback for unknown error types
-    else {
-      form.setError('root', { message: 'Something went wrong' });
+      if (error instanceof AppError) {
+        form.setError('root', { message: error.message });
+      }
+      // If error is from fetch or any other source
+      else if (error instanceof Error) {
+        form.setError('root', { message: error.message });
+      }
+      // fallback for unknown error types
+      else {
+        form.setError('root', { message: 'Something went wrong' });
+      }
     }
-    } 
   };
 
   return (
@@ -67,7 +79,7 @@ export default function LoginForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full border border-gray-200 mx-auto p-6 space-y-6 bg-white rounded-md shadow-2xl shadow-gray-100"
+          className="w-full border border-gray-100 mx-auto p-6 space-y-6 bg-white rounded-md shadow-2xl shadow-gray-100"
         >
           <h1 className="text-2xl font-semibold text-center">Login</h1>
 

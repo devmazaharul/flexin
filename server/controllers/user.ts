@@ -10,7 +10,7 @@ import AppError, { handleError } from '../responce/error';
 import { SuccessResponse } from '../responce/functionRes';
 import bcrypt from 'bcrypt';
 import { appConfig } from '@/constant/app.config';
-import { jwtGenarate } from '@/utils/jwt';
+import { genarateEmailToken, jwtGenarate, jwtVerify } from '@/utils/jwt';
 import { prisma } from '../config/prisma';
 import { cookies } from 'next/headers';
 import { currentUserInfo } from '@/authentication/auth';
@@ -18,6 +18,7 @@ import { selectResponse } from '@/utils/prisma';
 import { queueService } from '../queue/queue';
 import { queueJobName } from '@/types/others';
 import mailService from '../config/mail';
+import { redirect } from 'next/navigation';
 
 const createUser = async (
   data: SignupType
@@ -51,6 +52,13 @@ const createUser = async (
       select: selectResponse,
     });
 
+    const verifyEmailPayload = {
+      email: user.email,
+      name: user.name,
+    };
+
+    const verifyEmailtoken = genarateEmailToken(verifyEmailPayload, '1d');
+
     await mailService({
       to: data.email,
       subject: 'Welcome to Our Service',
@@ -60,7 +68,7 @@ const createUser = async (
         bodyHtml: `<p>Hi ${data.name},</p><p>Thank you for signing up!</p>`,
         greeting: 'Welcome!',
         reason: 'We are excited to have you on board.',
-        callToActionLink: `${appConfig.hostname.BASE_URL}/verify-email?token=someToken`,
+        callToActionLink: `${appConfig.hostname.BASE_URL}/verify?token=${verifyEmailtoken}`,
         callToActionText: 'Verify your email',
         subject: 'Welcome to Our Service',
       },
@@ -91,13 +99,19 @@ const createUser = async (
   }
 };
 
-const loginUser = async (
-  data: LoginType
-): Promise<ReturnType<typeof SuccessResponse>> => {
+const loginUser = async (data: LoginType): Promise<ReturnType<typeof SuccessResponse>> => {
   try {
     // 1. Find user
     const userIfExist = await prisma.user.findFirst({
       where: { email: data.email },
+      select:{
+        name:true,
+        email:true,
+        isVerified:true,
+        password:true,
+        id:true,
+        role:true
+      }
     });
 
     if (!userIfExist) {
@@ -139,7 +153,7 @@ const loginUser = async (
 
     // 6. Set cookie
     const cookie = await cookies();
-    cookie.set('token', token, {
+    cookie.set('authToken', token, {
       httpOnly: true,
       secure: false, // 🔒 in production make this true
       sameSite: 'lax',
@@ -147,7 +161,7 @@ const loginUser = async (
     });
 
     // 7. Return response
-    return SuccessResponse<userItem>({
+    return SuccessResponse<{name:string;email:string;isVerified:boolean}>({
       message: 'Account login success',
       status: 200,
       data: safeUser,
@@ -184,6 +198,48 @@ const resetPassword = async (data: {
     });
   } catch (error) {
     throw handleError(error);
+  }
+};
+
+const verifyAccount = async (token: string) => {
+  try {
+    const decodeAndVerify = jwtVerify(token);
+    if (!decodeAndVerify)
+      throw new AppError({
+        message: 'Unauthorized',
+      });
+
+    const { email, name } = decodeAndVerify as { email: string; name: string };
+    const findUser = await prisma.user.findUnique({
+      where: {
+        email,
+      },
+    });
+
+    if(!findUser) throw new AppError({
+      message:"Invalid token"
+    })
+
+    if(findUser.isVerified) throw new AppError({
+      message:"Already verified account"
+    })
+
+    const updateStatus=await prisma.user.update({
+      where:{email:email},
+      data:{isVerified:true}
+    })
+
+    return SuccessResponse({
+      message:"successfully verified",
+      status:200,
+      data:{
+        name:name
+      }
+    })
+
+
+  } catch (error) {
+    return handleError(error);
   }
 };
 
@@ -310,6 +366,70 @@ const changePassword = async (
   }
 };
 
+const logout=async()=>{
+  try {
+       const cookie = await cookies();
+       const deleteToken=cookie.delete("authToken")
+        if(!deleteToken) throw new AppError({
+          message:"Error to logout oparation"
+        })
+        return SuccessResponse({
+          message:"Logout successfull",
+          status:200,
+          data:{}
+        })
+  } catch (error) {
+    return handleError(error)
+  }
+}
+
+
+const isLoggedInUser=async()=>{
+
+try {
+    const cookieObj=await cookies()
+  const hasLoggedIn=cookieObj.get("authToken")
+  if(!hasLoggedIn) throw new AppError({
+    message:"Access denied"
+  })
+
+  const token=hasLoggedIn.value 
+
+  const decode=jwtVerify(token) as {
+    id:string
+  }
+  if(!decode) throw new AppError({
+    message:"Access denied"
+  }) 
+
+  const isValidUser=await prisma.user.findUnique({
+    where:{id:decode.id},
+    select:{
+      name:true,
+      email:true,
+      isVerified:true
+    }
+  })
+  if(!isValidUser) throw new AppError({
+    message:"Access denied"
+  })
+
+  return SuccessResponse({
+    message:"Valid user",
+    status:200,
+    data:isValidUser
+  })
+
+
+
+} catch (error) {
+  return handleError(error)
+}
+  
+}
+
+
+
 export {
   createUser,
   loginUser,
@@ -317,4 +437,7 @@ export {
   resetPassword,
   currentUser,
   changePassword,
+  verifyAccount,
+  logout,
+  isLoggedInUser
 };

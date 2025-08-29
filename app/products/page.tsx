@@ -7,6 +7,7 @@ import TopInfo from '../__global_components/TopInfo';
 import ProductsList from './ProductsList';
 import { ProductsSkeletonGrid } from './__sub/Productskeleton';
 
+
 export default function page() {
   return (
     <div>

@@ -68,7 +68,7 @@ export default function SignUpForm() {
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
-          className="w-full mx-auto p-6 space-y-6 bg-white rounded-md shadow-2xl shadow-gray-100 border border-gray-200"
+          className="w-full mx-auto p-6 space-y-6 bg-white rounded-md shadow-2xl shadow-gray-100 border border-gray-100"
         >
           <h1 className="text-2xl font-semibold text-center">Singup</h1>
           {/* Name Field */}
