@@ -3,8 +3,6 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import { Toaster } from 'sonner';
 import Header from './__global_components/Header';
-import { isLoggedInUser } from '@/server/controllers/user';
-
 
 
 const geistSans = Geist({

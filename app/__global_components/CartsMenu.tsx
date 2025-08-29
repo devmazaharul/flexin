@@ -15,9 +15,8 @@ import { toast } from 'sonner';
 import Image from 'next/image';
 import useWishStore from '@/hook/useWishStore';
 import Link from 'next/link';
-import { isLoggedInUser, logout } from '@/server/controllers/user';
+import {  logout } from '@/server/controllers/user';
 import { useRouter } from 'next/navigation';
-import { boolean } from 'zod';
 import { useAuthStore } from '@/hook/auth';
 
 type NotificationItem = {
@@ -216,7 +215,7 @@ export default function CartsMenu() {
         }
       }
       setOpenUser(false);
-    } catch (error) {
+    } catch  {
       toast.success('Eror logout');
     }
   };
