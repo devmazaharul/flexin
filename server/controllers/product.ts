@@ -35,7 +35,7 @@ const allProduct = async (
     return SuccessResponse<any>({
       message: 'All filtered products',
       status: 200,
-      data: products,
+      data: products.reverse(),
     });
   } catch (error) {
     throw handleError(error);

@@ -65,16 +65,7 @@ const createUser = async (
       additionalInfo: {
         toName: data.name,
         fromName: 'Flexin Team',
-        bodyHtml: `<div>
-        <p>
-          Once your email is verified, you’ll unlock your full access to Flexin and all its features.
-        </p>
-
-        <p>
-          If you didn’t create this account, you can safely ignore this email.
-        </p>
-        </div>
-
+        bodyHtml: `<p>Once your email is verified, you’ll unlock your full access to Flexin and all its features.</p>
         <br/>`,
         greeting: 'Welcome!',
         reason:

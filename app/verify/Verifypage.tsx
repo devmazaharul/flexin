@@ -1,5 +1,4 @@
 'use client'
-
 import { verifyAccount } from "@/server/controllers/user";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
@@ -91,12 +90,14 @@ export default function VerifyPage({ token }: { token: string }) {
           </p>
         )}
 
-        <div className="flex flex-col sm:flex-row gap-4 mt-4 w-full justify-center">
-          <Link href="/login" passHref>
+        <div className="flex gap-4 mt-4 w-full justify-center">
+        <div>
+            <Link href="/login" passHref>
             <Button className="cursor-pointer" asChild>
               <span>Go to Login</span>
             </Button>
           </Link>
+        </div>
 
           {status !== 'success' && (
             <Button className="cursor-pointer" variant="secondary" onClick={() => location.reload()}>

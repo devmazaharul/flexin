@@ -39,7 +39,6 @@ export default function SignUpForm() {
 
     try {
       const signipAction = await createUser({ name, email, password });
-      console.log(signipAction);
       if (signipAction.status !== 201)
         throw new AppError({
           message: signipAction.message,
@@ -47,6 +46,7 @@ export default function SignUpForm() {
 
       toast.success(signipAction.message);
       router.push('/login');
+       form.reset();
     } catch (error: unknown) {
       if (error instanceof AppError) {
         form.setError('root', { message: error.message });
@@ -59,9 +59,7 @@ export default function SignUpForm() {
       else {
         form.setError('root', { message: 'Something went wrong' });
       }
-    } finally {
-      form.reset();
-    }
+    } 
   };
   return (
     <div className="w-[350px] mx-auto flex items-center h-screen">

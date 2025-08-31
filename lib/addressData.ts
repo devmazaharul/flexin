@@ -1,5 +1,5 @@
 
-export const SelectAddress = [
+export const divisionData = [
   {
     id: '1',
     name: 'Chattagram',

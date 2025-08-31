@@ -1,6 +1,8 @@
 'use client';
+
 import { useCartStore } from '@/hook/persist';
-import React, { useMemo } from 'react';
+import { useAddressStore } from '@/store/useAddressStore';
+import React, { useEffect, useMemo } from 'react';
 import Image from 'next/image';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -13,12 +15,15 @@ import { PaymentMethod } from '@prisma/client';
 import AppError, { globalErrorMessage } from '@/server/responce/error';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import Address from './Address';
+import { useAuthStore } from '@/hook/auth';
 
 export default function BetterCheckout() {
   const cartStore = useCartStore();
   const items = cartStore.cart;
   const router = useRouter();
-
+  const addresses = useAddressStore((pre) => pre.totalAddress);
+  const userInfo=useAuthStore((pre)=>pre.user)
   const {
     register,
     handleSubmit,
@@ -32,13 +37,9 @@ export default function BetterCheckout() {
       fullName: '',
       email: '',
       phone: '',
-      street: '',
-      city: '',
-      postCode: '',
-      country: 'Bangladesh',
       shipping: 'standard',
       payment: 'CASH_ON_DELIVERY',
-      agreed: false,
+      agreed: false
     },
   });
 
@@ -52,21 +53,26 @@ export default function BetterCheckout() {
   const shippingFee = shipping === 'express' ? 7 : 0;
   const total = Math.max(0, subtotal + shippingFee);
 
+
+
   const onSubmit = async (data: CheckoutFormValues) => {
+
     try {
+      if(Object.values(addresses).includes("")) throw new AppError({message:"Invalid address"});
+
+
       const addOrder = await orderProcess({
-        userId: 'cmeqphwn90000tyegb78piu63',
+        userEmail: userInfo?.email!, // replace with real userId
         OrderItems: [...items],
-        Payment: {
-          paymentMethod: data.payment as PaymentMethod,
-        },
+        address:addresses,
+        Payment: { paymentMethod: data.payment as PaymentMethod },
       });
 
-      if (addOrder.status !== 200)
-        throw new AppError({
-          message: addOrder.message,
-        });
-      toast.success('Successfully order place');
+      if (addOrder.status !== 200) {
+        throw new AppError({ message: addOrder.message });
+      }
+
+      toast.success('Successfully placed order');
       cartStore.clearCart();
       router.replace('/success');
     } catch (error) {
@@ -75,13 +81,14 @@ export default function BetterCheckout() {
     }
   };
 
+
   return (
     <main className="mx-auto max-w-6xl px-4 py-8">
       {/* Progress header */}
       <ol className="mb-8 md:flex items-center gap-4 text-sm hidden">
         {[
           ['Cart', items.length > 0],
-          ['Address', isValid],
+          ['Address',!Object.values(addresses).includes("")],
           ['Payment', true],
           ['Review', watch('agreed')],
         ].map(([label, done], i) => (
@@ -110,7 +117,7 @@ export default function BetterCheckout() {
       >
         {/* Left: Forms */}
         <section className="lg:col-span-2 space-y-6">
-          {/* Customer */}
+          {/* Customer Info */}
           <Card>
             <CardHeader
               title="Customer Information"
@@ -121,25 +128,14 @@ export default function BetterCheckout() {
                 <Input placeholder="John Doe" {...register('fullName')} />
                 <ErrorText msg={errors.fullName?.message} />
               </Field>
-
-              <Field
-                label="Email"
-                required
-                hint="We’ll send confirmation here."
-              >
-                <Input
-                  type="email"
-                  placeholder="john@mail.com"
-                  {...register('email')}
-                />
+              <Field label="Email" required hint="We’ll send confirmation here.">
+                <Input type="email" placeholder="john@mail.com" {...register('email')} />
                 <ErrorText msg={errors.email?.message} />
               </Field>
-
               <Field label="Phone" required>
                 <Input placeholder="+8801XXXXXXXXX" {...register('phone')} />
                 <ErrorText msg={errors.phone?.message} />
               </Field>
-
               <div />
             </div>
           </Card>
@@ -147,32 +143,7 @@ export default function BetterCheckout() {
           {/* Address */}
           <Card>
             <CardHeader title="Shipping Address" />
-            <div className="grid gap-4">
-              <Field label="Street address" required>
-                <Input
-                  placeholder="House, road, area"
-                  {...register('street')}
-                />
-                <ErrorText msg={errors.street?.message} />
-              </Field>
-
-              <div className="grid gap-4 md:grid-cols-3">
-                <Field label="City" required>
-                  <Input placeholder="Dhaka" {...register('city')} />
-                  <ErrorText msg={errors.city?.message} />
-                </Field>
-
-                <Field label="Post code" required>
-                  <Input placeholder="1205" {...register('postCode')} />
-                  <ErrorText msg={errors.postCode?.message} />
-                </Field>
-
-                <Field label="Country" required>
-                  <Input placeholder="Bangladesh" {...register('country')} />
-                  <ErrorText msg={errors.country?.message} />
-                </Field>
-              </div>
-            </div>
+            <Address />
           </Card>
 
           {/* Shipping */}
@@ -185,12 +156,7 @@ export default function BetterCheckout() {
                 right="Free"
                 desc="Best value — delivered by courier."
                 checked={shipping === 'standard'}
-                onChange={() =>
-                  setValue('shipping', 'standard', {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
-                }
+                onChange={() => setValue('shipping', 'standard', { shouldDirty: true, shouldValidate: true })}
               />
               <RadioRow
                 name="shipping"
@@ -198,12 +164,7 @@ export default function BetterCheckout() {
                 right="$7"
                 desc="Fast delivery with priority handling."
                 checked={shipping === 'express'}
-                onChange={() =>
-                  setValue('shipping', 'express', {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
-                }
+                onChange={() => setValue('shipping', 'express', { shouldDirty: true, shouldValidate: true })}
               />
             </div>
           </Card>
@@ -212,43 +173,17 @@ export default function BetterCheckout() {
           <Card>
             <CardHeader title="Payment" subtitle="Select a payment method." />
             <div className="grid gap-3">
-              <RadioRow
-                name="payment"
-                title="Cash on Delivery"
-                desc="Pay in cash when you receive the package."
-                checked={payment === 'CASH_ON_DELIVERY'}
-                onChange={() =>
-                  setValue('payment', 'CASH_ON_DELIVERY', {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
-                }
-              />
-              <RadioRow
-                name="payment"
-                title="bKash"
-                desc="Pay via bKash wallet."
-                leftBadge="Recommended"
-                checked={payment === 'BKASH'}
-                onChange={() =>
-                  setValue('payment', 'BKASH', {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
-                }
-              />
-              <RadioRow
-                name="payment"
-                title="Pay via mazapay wallet."
-                desc="We accept Visa, Mastercard and Amex."
-                checked={payment === 'MAZAPAY'}
-                onChange={() =>
-                  setValue('payment', 'MAZAPAY', {
-                    shouldDirty: true,
-                    shouldValidate: true,
-                  })
-                }
-              />
+              {['CASH_ON_DELIVERY', 'BKASH', 'MAZAPAY'].map((method) => (
+                <RadioRow
+                  key={method}
+                  name="payment"
+                  title={method === 'CASH_ON_DELIVERY' ? 'Cash on Delivery' : method === 'BKASH' ? 'bKash' : 'MazaPay Wallet'}
+                  desc={method === 'CASH_ON_DELIVERY' ? 'Pay in cash when you receive the package.' : method === 'BKASH' ? 'Pay via bKash wallet.' : 'We accept Visa, Mastercard and Amex.'}
+                  leftBadge={method === 'BKASH' ? 'Recommended' : undefined}
+                  checked={payment === method}
+                  onChange={() => setValue('payment', method as PaymentMethod, { shouldDirty: true, shouldValidate: true })}
+                />
+              ))}
             </div>
           </Card>
 
@@ -286,45 +221,24 @@ export default function BetterCheckout() {
                 {items.map((it) => (
                   <li key={it.id} className="flex gap-3 py-3">
                     <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-md border border-gray-100 bg-gray-50">
-                      <Image
-                        src={it.imageUrl}
-                        alt={it.name}
-                        className="h-full w-full object-cover"
-                        width={100}
-                        height={100}
-                      />
+                      <Image src={it.imageUrl} alt={it.name} className="h-full w-full object-cover" width={100} height={100} />
                     </div>
                     <div className="min-w-0 flex-1">
                       <p className="truncate text-sm font-medium">{it.name}</p>
                       <div className="flex items-center gap-2">
-                        {it.color && (
-                          <p className="text-xs text-gray-500">{it.color}</p>
-                        )}
-                        {it.size && (
-                          <p className="text-xs text-gray-500 uppercase">
-                            {it.size}
-                          </p>
-                        )}
+                        {it.color && <p className="text-xs text-gray-500">{it.color}</p>}
+                        {it.size && <p className="text-xs text-gray-500 uppercase">{it.size}</p>}
                       </div>
-                      <p className="mt-1 text-xs text-gray-500">
-                        Qty: {it.quantity}
-                      </p>
+                      <p className="mt-1 text-xs text-gray-500">Qty: {it.quantity}</p>
                     </div>
-                    <div className="text-sm font-medium">
-                      ${(it.price * it.quantity).toFixed(2)}
-                    </div>
+                    <div className="text-sm font-medium">${(it.price * it.quantity).toFixed(2)}</div>
                   </li>
                 ))}
               </ul>
 
               <div className="space-y-2 text-sm">
                 <Row label="Subtotal" value={`$${subtotal.toFixed(2)}`} />
-                <Row
-                  label="Shipping"
-                  value={
-                    shippingFee === 0 ? 'Free' : `$${shippingFee.toFixed(2)}`
-                  }
-                />
+                <Row label="Shipping" value={shippingFee === 0 ? 'Free' : `$${shippingFee.toFixed(2)}`} />
                 <div className="border-t border-gray-200 pt-2 font-semibold flex items-center justify-between">
                   <span>Total</span>
                   <span className="text-lg">${total.toFixed(2)}</span>
@@ -334,16 +248,12 @@ export default function BetterCheckout() {
               <Button
                 variant="default"
                 type="submit"
-                disabled={!isValid || isSubmitting || items.length == 0}
-                className={`btn-primary w-full ${
-                  !isValid ? 'opacity-60 cursor-not-allowed' : ''
-                } cursor-pointer`}
+                disabled={!isValid || isSubmitting || items.length === 0}
+                className={`btn-primary w-full ${!isValid ? 'opacity-60 cursor-not-allowed' : ''}`}
               >
                 {isSubmitting ? 'Placing…' : 'Place Order'}
               </Button>
-              <p className="text-center text-xs text-gray-500">
-                🔒 Secure checkout • 24/7 support
-              </p>
+              <p className="text-center text-xs text-gray-500">🔒 Secure checkout • 24/7 support</p>
             </div>
           </Card>
         </aside>
@@ -352,14 +262,10 @@ export default function BetterCheckout() {
   );
 }
 
-/* ---------- Small UI primitives (unchanged) ---------- */
+/* ---------- UI primitives ---------- */
 
 function Card({ children }: { children: React.ReactNode }) {
-  return (
-    <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl shadow-gray-100 dark:border-gray-800 dark:bg-gray-900">
-      {children}
-    </div>
-  );
+  return <div className="rounded-2xl border border-gray-100 bg-white p-5 shadow-2xl shadow-gray-100 dark:border-gray-800 dark:bg-gray-900">{children}</div>;
 }
 
 function CardHeader({ title, subtitle }: { title: string; subtitle?: string }) {
@@ -371,21 +277,11 @@ function CardHeader({ title, subtitle }: { title: string; subtitle?: string }) {
   );
 }
 
-function Field({
-  label,
-  children,
-  required,
-  hint,
-}: {
-  label: string;
-  required?: boolean;
-  hint?: string;
-  children: React.ReactNode;
-}) {
+function Field({ label, children, required, hint }: { label: string; required?: boolean; hint?: string; children: React.ReactNode }) {
   return (
     <label className="block">
       <span className="mb-1 block text-sm font-medium">
-        {label} {required ? <span className="text-rose-600">*</span> : null}
+        {label} {required && <span className="text-rose-600">*</span>}
       </span>
       <div className="relative">{children}</div>
       {hint && <span className="mt-1 block text-xs text-gray-500">{hint}</span>}
@@ -393,48 +289,15 @@ function Field({
   );
 }
 
-function RadioRow({
-  name,
-  title,
-  desc,
-  right,
-  leftBadge,
-  checked,
-  onChange,
-}: {
-  name: string;
-  title: string;
-  desc?: string;
-  right?: string;
-  leftBadge?: string;
-  checked: boolean;
-  onChange: () => void;
-}) {
+function RadioRow({ name, title, desc, right, leftBadge, checked, onChange }: { name: string; title: string; desc?: string; right?: string; leftBadge?: string; checked: boolean; onChange: () => void }) {
   return (
-    <label
-      className={[
-        'flex items-start justify-between gap-3 rounded-xl border p-3 transition',
-        checked
-          ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-900/10'
-          : 'border-gray-200 hover:bg-gray-50',
-      ].join(' ')}
-    >
+    <label className={`flex items-start justify-between gap-3 rounded-xl border p-3 transition ${checked ? 'border-blue-600 bg-blue-50/50 dark:bg-blue-900/10' : 'border-gray-200 hover:bg-gray-50'}`}>
       <div className="flex items-start gap-3">
-        <input
-          type="radio"
-          name={name}
-          checked={checked}
-          onChange={onChange}
-          className="mt-1 h-4 w-4"
-        />
+        <input type="radio" name={name} checked={checked} onChange={onChange} className="mt-1 h-4 w-4" />
         <div>
           <div className="flex items-center gap-2">
             <p className="text-sm font-medium">{title}</p>
-            {leftBadge && (
-              <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">
-                {leftBadge}
-              </span>
-            )}
+            {leftBadge && <span className="rounded-full bg-blue-100 px-2 py-0.5 text-[10px] font-medium text-blue-700">{leftBadge}</span>}
           </div>
           {desc && <p className="mt-0.5 text-xs text-gray-500">{desc}</p>}
         </div>
@@ -444,27 +307,11 @@ function RadioRow({
   );
 }
 
-function Row({
-  label,
-  value,
-  highlight,
-}: {
-  label: string;
-  value: string;
-  highlight?: boolean;
-}) {
+function Row({ label, value, highlight }: { label: string; value: string; highlight?: boolean }) {
   return (
     <div className="flex items-center justify-between">
-      <span
-        className={`text-sm ${highlight ? 'text-rose-600' : 'text-gray-600'}`}
-      >
-        {label}
-      </span>
-      <span
-        className={`text-sm ${highlight ? 'text-rose-600' : 'text-gray-900'}`}
-      >
-        {value}
-      </span>
+      <span className={`text-sm ${highlight ? 'text-rose-600' : 'text-gray-600'}`}>{label}</span>
+      <span className={`text-sm ${highlight ? 'text-rose-600' : 'text-gray-900'}`}>{value}</span>
     </div>
   );
 }

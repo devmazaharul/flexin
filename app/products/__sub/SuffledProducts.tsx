@@ -1,10 +1,15 @@
-import { products } from '@/local.db';
+
 import { shuffleInProducts } from '@/utils/algorithm';
 import React from 'react';
 import ProductCard from './ProductCard';
+import { allProduct } from '@/server/controllers/product';
 
-export default function SuffledProducts() {
-  const sortedProducts = shuffleInProducts(products).slice(0, 6);
+export default async function SuffledProducts() {
+  const getProdcuts=await allProduct({
+    isDiscount: false,
+    isFeature: false,
+  });
+  const sortedProducts = shuffleInProducts(getProdcuts.data).slice(0, 6);
 
   return (
     <>

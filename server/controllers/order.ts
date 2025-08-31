@@ -1,4 +1,4 @@
-'use server'
+'use server';
 import AppError, { handleError } from '../responce/error';
 import { cancelOder, orderProductState } from '@/types/order';
 import { SuccessResponse } from '../responce/functionRes';
@@ -10,7 +10,7 @@ import {
   PaymentMethod,
 } from '@prisma/client';
 import { generateOrderId } from '@/utils/algorithm';
-
+import { TotalAddress } from '@/store/useAddressStore';
 
 const cancelOrder = async (
   orderid: string
@@ -73,8 +73,9 @@ type OrderItemInput = {
 };
 
 type orderStateTypes = {
-  userId: string;
+  userEmail: string;
   OrderItems: OrderItemInput[];
+  address: TotalAddress;
   Payment?: {
     paymentMethod: PaymentMethod;
     transactionId?: string;
@@ -83,16 +84,27 @@ type orderStateTypes = {
 
 const orderProcess = async (data: orderStateTypes) => {
   try {
-    const { OrderItems, Payment, userId } = data;
+    const { OrderItems, address, Payment, userEmail } = data;
 
     if (!OrderItems || OrderItems.length === 0) {
       throw new AppError({ message: 'No product found' });
     }
 
+    const findUser=await prisma.user.findUnique({
+      where:{email:userEmail}
+    })
+
+    if(!findUser) throw new AppError({
+      message:"Invalid user "
+    })
+
+
+
     // Transaction শুরু
     return await prisma.$transaction(async (tx) => {
       // 1) product ids বের করা
       const productIds = OrderItems.map((i) => i.id);
+
 
       // 2) DB থেকে products আনা
       const products = await tx.product.findMany({
@@ -147,8 +159,8 @@ const orderProcess = async (data: orderStateTypes) => {
 
       const order = await tx.order.create({
         data: {
-          userId,
-          orderID:generateOrderId(),
+          userId:findUser.id,
+          orderID: generateOrderId(),
           total,
           status: OrderStatus.PROCESSING,
           OrderItems: {
@@ -159,8 +171,13 @@ const orderProcess = async (data: orderStateTypes) => {
       });
 
       // 8) Payment create (যদি থাকে অথবা COD placeholder)
-      const paymentMethod = Payment?.paymentMethod ?? PaymentMethod.CASH_ON_DELIVERY;
-      const transactionId = paymentMethod === PaymentMethod.CASH_ON_DELIVERY ? `COD-${order.id}`: Payment?.transactionId ??(() => {
+      const paymentMethod =
+        Payment?.paymentMethod ?? PaymentMethod.CASH_ON_DELIVERY;
+      const transactionId =
+        paymentMethod === PaymentMethod.CASH_ON_DELIVERY
+          ? `COD-${order.id}`
+          : Payment?.transactionId ??
+            (() => {
               throw new AppError({
                 message: 'transactionId required for online payment',
               });
@@ -200,42 +217,41 @@ const orderProcess = async (data: orderStateTypes) => {
       });
 
       return SuccessResponse({
-        message:"success",
-        status:200,
-        data:fullOrder
-      })
+        message: 'success',
+        status: 200,
+        data: fullOrder,
+      });
     });
   } catch (error) {
     return handleError(error);
   }
 };
 
-const getOrderInfoWithUserId=async(orderId:string)=>{
-    try {
-        if(!orderId) throw new AppError({
-          message:"Invalid user id"
-        })
-          const findOrder=await prisma.order.findUnique({
-            where:{
-              orderID:orderId,
-            },
-            include:{Payments:true,user:true}
-          })
-          if(!findOrder) throw new AppError({
-            message:"invalid order "
-          })
+const getOrderInfoWithUserId = async (orderId: string) => {
+  try {
+    if (!orderId)
+      throw new AppError({
+        message: 'Invalid user id',
+      });
+    const findOrder = await prisma.order.findUnique({
+      where: {
+        orderID: orderId,
+      },
+      include: { Payments: true, user: true },
+    });
+    if (!findOrder)
+      throw new AppError({
+        message: 'invalid order ',
+      });
 
-          
+    return SuccessResponse({
+      message: 'successfully get order info',
+      status: 200,
+      data: findOrder,
+    });
+  } catch (error) {
+    return handleError(error);
+  }
+};
 
-          return SuccessResponse({
-            message:"successfully get order info",
-            status:200,
-            data:findOrder
-          })
-
-    } catch (error) {
-      return handleError(error)
-    }
-}
-
-export { cancelOrder, orderProcess,getOrderInfoWithUserId };
+export { cancelOrder, orderProcess, getOrderInfoWithUserId };
