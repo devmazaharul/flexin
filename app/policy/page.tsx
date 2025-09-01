@@ -3,7 +3,7 @@ import React from "react";
 export const dynamic = "force-dynamic"; // ✅ always runtime এ fetch হবে, build এ pre-render হবে না
 
 export default async function Page() {
-  let data: any = null;
+  let data = null;
 
   try {
     const res = await fetch("https://flexin.mazaharul.site/api/debug", {
