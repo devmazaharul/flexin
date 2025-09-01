@@ -19,6 +19,7 @@ import { queueService } from '../queue/queue';
 import { queueJobName } from '@/types/others';
 import mailService from '../config/mail';
 import { redirect } from 'next/navigation';
+import { log } from 'next-axiom';
 
 const createUser = async (
   data: SignupType
@@ -140,6 +141,7 @@ const loginUser = async (
     );
 
     if (!isPasswordMatch) {
+      log.warn('Invalid password attempt', { email: data.email });
       throw new AppError({
         message: 'Invalid user credentials',
         status: 400,
@@ -224,10 +226,12 @@ const verifyAccount = async (token: string) => {
       },
     });
 
-    if (!findUser)
-      throw new AppError({
+    if (!findUser){
+    log.warn('Attempt to verify non-existent user', { email });
+        throw new AppError({
         message: 'Invalid token',
       });
+    }
 
     if (findUser.isVerified)
       throw new AppError({
@@ -263,8 +267,10 @@ const updateAccount = async (
   data: updateItem
 ): Promise<ReturnType<typeof SuccessResponse>> => {
   try {
+  
     const authRes = await currentUserInfo();
     if (authRes.status !== 200) {
+      log.warn('Unauthorized account update attempt', { userId: authRes.data?.id });
       throw new AppError({
         message: 'Unauthorized user',
         status: 401,
@@ -277,6 +283,13 @@ const updateAccount = async (
       },
       select: selectResponse,
     });
+    if(!updateuser){
+      throw new AppError({  message: 'User not found', status: 404 });
+    }
+
+    log.info('User account updated', { userId: updateuser.id });
+
+
 
     return SuccessResponse<userItem>({
       message: 'Account updated successfully',
@@ -349,6 +362,7 @@ const changePassword = async (
 
     const isMatch = await bcrypt.compare(currentPassword, user.password);
     if (!isMatch) {
+      log.warn('Invalid current password attempt', { userId: user.id });
       throw new AppError({ message: 'Current password is not valid' });
     }
 

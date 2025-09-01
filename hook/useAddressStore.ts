@@ -5,6 +5,7 @@ export interface TotalAddress {
   district: string;
   upazila: string;
   union: string;
+  note?:string
 }
 
 interface AddressState {
@@ -12,6 +13,7 @@ interface AddressState {
   districtId: string;
   upazilaId: string;
   unionId: string;
+  note:string;
   totalAddress: TotalAddress;
   setDivisionId: (id: string) => void;
   setDistrictId: (id: string) => void;
@@ -25,6 +27,7 @@ export const useAddressStore = create<AddressState>((set) => ({
   districtId: "",
   upazilaId: "",
   unionId: "",
+  note:"",
   totalAddress: { division: "", district: "", upazila: "", union: "" },
 
   setDivisionId: (id) =>

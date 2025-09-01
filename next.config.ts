@@ -1,18 +1,16 @@
+import { withAxiom } from "next-axiom";
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-    allowedDevOrigins: ['local-origin.dev', '*.local-origin.dev'],
-
-  images:{
-  remotePatterns:[
-    {
-      protocol: 'https',
-        hostname: '**',
-        pathname: '/**',
-
-    }
-  ]
-}
+  images: {
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**",
+        pathname: "/**",
+      },
+    ],
+  },
 };
 
-export default nextConfig;
+export default withAxiom(nextConfig);

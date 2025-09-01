@@ -1,12 +1,17 @@
 'use client';
 
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useState } from 'react';
 import { divisionData, districData, upazilaData, unionData } from '@/lib/addressData';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { useAddressStore } from '@/store/useAddressStore';
+
 import { MapPin, MoveRight } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
+import { useAddressStore } from '@/hook/useAddressStore';
 
 export default function Address() {
+
+  const [note, setnote] = useState("")
+
   const {
     divisionId,
     districtId,
@@ -49,15 +54,16 @@ export default function Address() {
           district: selectedDistrict?.bn_name || '',
           upazila: selectedUpazila?.bn_name || '',
           union: selectedUnion?.bn_name || '',
+          note:note || 'no note here'
         }
       : undefined;
 
-  // ✅ সমাধান: useEffect-এর মধ্যে লুপ এড়াতে JSON.stringify ব্যবহার করা হয়েছে
+const isChnage=JSON.stringify(makeAddressObject)
   useEffect(() => {
     if (makeAddressObject) {
       setTotalAddress(makeAddressObject);
     }
-  }, [JSON.stringify(makeAddressObject)]);
+  }, [isChnage]);
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
@@ -137,7 +143,18 @@ export default function Address() {
             </SelectContent>
           </Select>
         </div>
+      {/* Notes */}
       </div>
+
+      <div className="w-full">
+  <Textarea
+  className='w-full'
+    placeholder="Write your note here..."
+    value={note}
+    onChange={(e) => setnote(e.target.value)}
+    disabled={!unionId}
+  />
+</div>
 
       {makeAddressObject && (
         <div className="p-3 rounded-xl w-full border border-blue-600 bg-blue-50/50 dark:bg-blue-900/10 shadow-sm">

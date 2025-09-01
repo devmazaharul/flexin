@@ -1,17 +1,21 @@
-import { $Enums } from '@prisma/client';
+import { TotalAddress } from "@/hook/useAddressStore";
+import { PaymentMethod } from "@prisma/client";
 
-export interface orderProductState {
-  id: string;
-  quantity:number
-}
+type OrderItemInput = {
+  id: string; // client পাঠায় product id হিসেবে
+  quantity: number;
+};
 
-export interface orderStateTypes {
-  userId: string;
-  OrderItems: orderProductState[];
-  Payment: $Enums.PaymentMethod;
-}
-
-
-export interface cancelOder{
-  orderID:string
-}
+export type orderStateTypes = {
+  userInfo: {
+    email: string;
+    name?: string;
+    phone?: string;
+  };
+  OrderItems: OrderItemInput[];
+  address: TotalAddress;
+  Payment?: {
+    paymentMethod: PaymentMethod;
+    transactionId?: string;
+  };
+};
