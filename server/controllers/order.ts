@@ -31,7 +31,7 @@ const orderProcess = async (data: orderStateTypes) => {
     });
 
     if (!findUser) {
-      log.error(`Invalid user with email: ${userInfo.email}`);
+      log.error(`[login]:Invalid user with email: ${userInfo.email}`);
       throw new AppError({
         message: 'Invalid user ',
       });

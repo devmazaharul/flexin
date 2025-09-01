@@ -1,4 +1,3 @@
-import { log } from 'next-axiom';
 
 class AppError extends Error {
   public status: number;
@@ -11,10 +10,6 @@ class AppError extends Error {
 export const handleError = (error: unknown) => {
   if (error instanceof AppError) {
     const appError = error as AppError;
-
-    log.error(
-      `Error type [${appError.name}] - Error message [${appError.message}]`
-    );
     return {
       message: appError.message || 'An error occurred',
       status: appError.status,
@@ -25,7 +20,7 @@ export const handleError = (error: unknown) => {
       message: string;
       status: number;
     };
-    log.error(`Error type [Error] - Error message ${othersError.message}`);
+
     return {
       message: othersError.message,
       status: othersError.status || 400,

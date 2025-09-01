@@ -131,7 +131,7 @@ export default function CartsMenu() {
       {/* === CART ICON & DROPDOWN === */}
       <div className="relative" ref={cartRef}>
         <button
-          className="relative cursor-pointer p-2 rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+          className="relative cursor-pointer p-2 rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
           aria-haspopup="dialog"
           aria-expanded={openCart}
           onClick={() => {
@@ -237,7 +237,7 @@ export default function CartsMenu() {
       {/* === WISHLIST ICON & DROPDOWN (Zustand) === */}
       <div className="relative hidden md:block" ref={wishRef}>
         <button
-          className="relative p-2 cursor-pointer rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+          className="relative p-2 cursor-pointer rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
           aria-haspopup="menu"
           aria-expanded={openWish}
           onClick={() => {
@@ -329,7 +329,7 @@ export default function CartsMenu() {
       {/* === NOTIFICATION ICON & DROPDOWN === */}
       <div className="relative " ref={notifRef}>
         <button
-          className="relative p-2 cursor-pointer rounded-md hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
+          className="relative p-2 cursor-pointer rounded-full hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-gray-300 transition"
           aria-haspopup="menu"
           aria-expanded={openNotif}
           onClick={() => {
