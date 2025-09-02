@@ -9,14 +9,19 @@ import {
   PaymentStatus,
   PaymentMethod,
 } from '@prisma/client';
-import { generateOrderId } from '@/utils/algorithm';
+import { generateOrderId, generatePaymentId } from '@/utils/algorithm';
 import { TotalAddress } from '@/hook/useAddressStore';
 import { log } from 'next-axiom';
+import { generateLog } from '@/utils';
 const prisma = new PrismaClient();
 
 const orderProcess = async (data: orderStateTypes) => {
   try {
     const { OrderItems, address, Payment, userInfo } = data;
+    if(Payment?.paymentMethod!=="CASH_ON_DELIVERY") throw new AppError({message:"Only COD payment method is allowed in this version"})
+    if (!userInfo?.email) {
+      throw new AppError({ message: 'User email is required' });
+    }
 
     // 1) Validate
     if (!OrderItems || OrderItems.length === 0) {
@@ -47,7 +52,7 @@ const orderProcess = async (data: orderStateTypes) => {
       });
 
       if (products.length !== productIds.length) {
-        log.error('One or more products are invalid');
+       generateLog('One or more products are invalid', 'error');
         throw new AppError({ message: 'One or more products are invalid' });
       }
 
@@ -118,7 +123,7 @@ const orderProcess = async (data: orderStateTypes) => {
         Payment?.paymentMethod ?? PaymentMethod.CASH_ON_DELIVERY;
       const transactionId =
         paymentMethod === PaymentMethod.CASH_ON_DELIVERY
-          ? `COD-${order.id}`
+          ? `${generatePaymentId()}`
           : Payment?.transactionId ??
             (() => {
               throw new AppError({
@@ -144,7 +149,7 @@ const orderProcess = async (data: orderStateTypes) => {
         });
       }
 
-      log.info(`Order ${order.orderID} created successfully`);
+     generateLog(`Order ${order.orderID} created successfully`, 'info');
 
       return SuccessResponse({
         message: 'success',
@@ -178,5 +183,10 @@ const getorderDatawithOrderId = async (orderID: string) => {
     return handleError(error);
   }
 };
+
+
+
+
+
 
 export { orderProcess, getorderDatawithOrderId };

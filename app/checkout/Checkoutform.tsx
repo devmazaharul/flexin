@@ -66,7 +66,7 @@ export default function BetterCheckout() {
         userInfo: {
           email: userInfo?.email || '',
           name: userInfo?.name,
-          phone: data.phone,
+          phone: data.phone
         },
         OrderItems: [...items],
         address: addresses,

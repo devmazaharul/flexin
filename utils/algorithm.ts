@@ -38,6 +38,19 @@ function imageToBase64(file:any) {
   return `ORD-${year}${month}${day}${uniquePart}`;
 }
 
+ function generatePaymentId(paymentMethodName:string="COD"): string {
+  const now = new Date();
+
+  const year = now.getFullYear().toString();
+  const month = (now.getMonth() + 1).toString().padStart(2, "0");
+  const day = now.getDate().toString().padStart(2, "0");
+
+  // ছোট UUID নেবো (প্রথম 6 digit)
+  const uniquePart = randomUUID().split("-")[0];
+
+  return `${paymentMethodName}-${year}${month}${day}${uniquePart}`;
+}
+
 // utils/date.ts
  function getEstimatedDelivery(days: number = 3): string {
   const date = new Date();
@@ -58,5 +71,6 @@ export {
   shuffleInProducts,
   imageToBase64,
   generateOrderId,
-  getEstimatedDelivery
+  getEstimatedDelivery,
+  generatePaymentId
 }

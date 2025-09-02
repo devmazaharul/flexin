@@ -20,6 +20,7 @@ import { queueJobName } from '@/types/others';
 import mailService from '../config/mail';
 import { redirect } from 'next/navigation';
 import { log } from 'next-axiom';
+import { generateLog } from '@/utils';
 
 const createUser = async (
   data: SignupType
@@ -141,7 +142,7 @@ const loginUser = async (
     );
 
     if (!isPasswordMatch) {
-      log.warn('Invalid password attempt', { email: data.email });
+    generateLog('Invalid login attempt due to wrong password', 'warn');
       throw new AppError({
         message: 'Invalid user credentials',
         status: 400,
