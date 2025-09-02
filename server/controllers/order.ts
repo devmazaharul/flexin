@@ -161,7 +161,12 @@ const orderProcess = async (data: orderStateTypes) => {
           toName:userInfo.name!,
           subject:`Order ${order.orderID} Confirmation`,
           reason:"Order Confirmation",
-          greeting:`Hi ${userInfo.name!},`,
+          greeting:`Hi `,
+          bodyHtml:`<p>Thank you for your order! We're excited to let you know that we've received your order <strong>${order.orderID}</strong> and it's currently being processed.</p>
+          <p>We'll send you another email once your order has shipped. In the meantime, if you have any questions or need assistance, feel free to reach out to our customer support team.</p>
+          <p>Thank you for choosing Flexin!</p>`,
+          callToActionLink:`https://flexin.shop/order/status/${order.orderID}`,
+          callToActionText:"View Order Status"
         }
      }).catch((error) => {
         generateLog(`Failed to send order confirmation email: ${error}`, 'error');
