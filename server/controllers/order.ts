@@ -13,6 +13,7 @@ import { generateOrderId, generatePaymentId } from '@/utils/algorithm';
 import { TotalAddress } from '@/hook/useAddressStore';
 import { log } from 'next-axiom';
 import { generateLog } from '@/utils';
+import mailService from '../config/mail';
 const prisma = new PrismaClient();
 
 const orderProcess = async (data: orderStateTypes) => {
@@ -126,6 +127,7 @@ const orderProcess = async (data: orderStateTypes) => {
           ? `${generatePaymentId()}`
           : Payment?.transactionId ??
             (() => {
+              generateLog('transactionId required for online payment', 'error');
               throw new AppError({
                 message: 'transactionId required for online payment',
               });
@@ -151,6 +153,20 @@ const orderProcess = async (data: orderStateTypes) => {
 
      generateLog(`Order ${order.orderID} created successfully`, 'info');
 
+     //send mail to user
+      mailService({
+        to: userInfo.email!,
+        subject: `Order ${order.orderID} Confirmation`,
+        additionalInfo:{
+          toName:userInfo.name!,
+          subject:`Order ${order.orderID} Confirmation`,
+          reason:"Order Confirmation",
+          greeting:`Hi ${userInfo.name!},`,
+        }
+     }).catch((error) => {
+        generateLog(`Failed to send order confirmation email: ${error}`, 'error');
+      });
+
       return SuccessResponse({
         message: 'success',
         status: 200,
@@ -159,6 +175,8 @@ const orderProcess = async (data: orderStateTypes) => {
     });
   } catch (error) {
     return handleError(error);
+  }finally {
+    await prisma.$disconnect();
   }
 };
 

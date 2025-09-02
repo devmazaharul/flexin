@@ -92,7 +92,6 @@ export default function OrderSuccess() {
       })
       .catch(console.log).finally(()=>setLoading(false))
   }, [orderStore.orderID]);
-
   if (loading)
     return <p className="text-center py-20 text-gray-600">Order finding...</p>;
   if (!orderInfo)

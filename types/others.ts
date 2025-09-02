@@ -7,12 +7,12 @@ export interface jwtpayload {
 export interface additionalInfoMail {
   toName: string;
   subject:string;
-  fromName: string;
-  bodyHtml: string;
+  fromName?: string;
+  bodyHtml?: string;
   greeting: string;
   reason: string;
-  callToActionLink: string;
-  callToActionText: string;
+  callToActionLink?: string;
+  callToActionText?: string;
 }
 
 export interface sendMail {
