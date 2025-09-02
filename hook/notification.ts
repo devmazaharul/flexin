@@ -33,7 +33,13 @@ export const useNotificationStore = create(
       title: notification.title,
       body: notification.body,
       href: notification.href ?? '/',
-      createdAt: new Date().toISOString(), // current date
+      createdAt: new Date().toLocaleDateString('en-US', {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+      }),
       read: false,
     };
 
