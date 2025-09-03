@@ -239,7 +239,7 @@ export default function Productdetails({ product }: { product: productItems }) {
                       .slice(0, COLOR_LEN_MAX)
                       .map((attr) => (
                         <li
-                          key={attr.id}
+                          key={Math.random()}
                           tabIndex={0}
                           role="button"
                           aria-disabled={!!isAlreadyInCart?.color}
@@ -294,7 +294,7 @@ export default function Productdetails({ product }: { product: productItems }) {
                       .slice(0, SIZE_LEN_MAX)
                       .map((attr) => (
                         <li
-                          key={attr.id}
+                          key={Math.random()}
                           tabIndex={0}
                           role="button"
                           aria-label={`Select size ${attr.value}`}

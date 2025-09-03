@@ -82,7 +82,7 @@ export default function ProductCard({
             {discount > 0 ? (
               <>
                 <span className="text-xl font-bold text-gray-800">
-                  €{(price - (price * discount) / 100).toFixed(0)}
+                  €{(price - (price * discount) / 100).toFixed(2)}
                 </span>
                 <span className="text-sm text-gray-500 line-through">
                   €{price.toFixed(2)}
@@ -90,7 +90,7 @@ export default function ProductCard({
               </>
             ) : (
               <span className="text-xl font-bold text-gray-800">
-                €{price.toFixed(0)}
+                €{price.toFixed(2)}
               </span>
             )}
           </div>
@@ -109,10 +109,11 @@ export default function ProductCard({
         {/* cart acton */}
         <div>
           {/*  add to cart this product */}
-          {!isAlreadyinCart && (
+          {!isAlreadyinCart  && (
             <Button
               onClick={handleAddtoCart}
               variant={'secondary'}
+              disabled={stock < 1}
               className="mt-3 cursor-pointer hover:bg-gray-200 w-full"
             >
               <ShoppingBasket /> Add to cart

@@ -152,7 +152,7 @@ const orderProcess = async (data: orderStateTypes) => {
         toName: userInfo.name!,
         subject: `Order ${order.orderID} Confirmation`,
         reason: 'Order Confirmation',
-        greeting: `Hi ${userInfo.name!},`,
+        greeting: `Hi`,
         bodyHtml: `<p>Thank you for your order! We've received your order <strong>${order.orderID}</strong> and it's being processed.</p>`,
         callToActionLink: `https://flexin.shop/order/status/${order.orderID}`,
         callToActionText: 'View Order Status',

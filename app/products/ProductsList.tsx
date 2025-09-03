@@ -14,7 +14,7 @@ export default async function ProductsList() {
   return (
     <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 m-6">
       {products.data.map((item) => (
-        <ProductCard key={item.id} productInfo={{ ...item }} />
+        <ProductCard key={item.slug} productInfo={{ ...item }} />
       ))}
     </div>
   );
