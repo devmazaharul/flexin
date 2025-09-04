@@ -107,20 +107,21 @@ export default function Productdetails({ product }: { product: productItems }) {
         {/* Left: Media */}
         <div className="flex justify-center md:justify-start">
           <div className="rounded-2xl overflow-hidden p-4 bg-white">
-            <div className="relative h-[480px] w-[480px]">
+            <div className="relative md:h-[480px] md:w-[480px]">
               {!imgLoaded && <Skeleton className="absolute inset-0 rounded-xl" />}
               <Lens lensSize={200} zoomFactor={2} duration={0.2}>
-                <Image
-                  src={imageUrl || "/placeholder.png"}
-                  alt={name}
-                  width={480}
-                  height={480}
-                  className={`rounded-xl object-cover transition-transform duration-300 hover:scale-105 ${
-                    imgLoaded ? "opacity-100" : "opacity-0"
-                  }`}
-                  priority
-                  onLoadingComplete={() => setImgLoaded(true)}
-                />
+              <Image
+  src={imageUrl || "/placeholder.png"}
+  alt={name}
+  width={480}
+  height={480}
+  className={`rounded-xl object-contain transition-transform duration-300 hover:scale-105 ${
+    imgLoaded ? "opacity-100" : "opacity-0"
+  }`}
+  priority
+  onLoadingComplete={() => setImgLoaded(true)}
+/>
+
               </Lens>
             </div>
           </div>
