@@ -28,6 +28,7 @@
     "framer-motion": "^12.23.12",
     "ioredis": "^5.7.0",
     "jsonwebtoken": "^9.0.2",
+    "ldrs": "^1.1.7",
     "lucide-react": "^0.539.0",
     "motion": "^12.23.12",
     "next": "15.4.5",

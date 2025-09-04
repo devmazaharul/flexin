@@ -34,8 +34,8 @@ export default function LoginForm() {
     },
   });
 
-//auth store
-const loginAuth=useAuthStore((item)=>item.authAdd)
+  //auth store
+  const loginAuth = useAuthStore((item) => item.authAdd);
 
   const onSubmit = async (values: LoginFormInputs) => {
     try {
@@ -47,17 +47,17 @@ const loginAuth=useAuthStore((item)=>item.authAdd)
         });
 
       toast.success(loginAction.message);
-      const items=loginAction.data as {
+      const items = loginAction.data as {
         name: string;
         email: string;
         isVerified: boolean;
-      }
-      const loginActionPayload={
+      };
+      const loginActionPayload = {
         name: items.name,
         email: items.email,
-        isVerified: items.isVerified
-      }
-      loginAuth(loginActionPayload)
+        isVerified: items.isVerified,
+      };
+      loginAuth(loginActionPayload);
       router.push('/account');
     } catch (error: unknown) {
       if (error instanceof AppError) {

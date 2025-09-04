@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import VerifyPage from "./Verifypage";
 
 export default async function page({
@@ -11,5 +12,7 @@ export default async function page({
 
 
   
-  return <VerifyPage  token={token!} />;
+  return <Suspense fallback={<div>Loading...</div>}>
+    <VerifyPage  token={token!} />
+  </Suspense>
 }

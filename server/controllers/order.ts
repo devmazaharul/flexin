@@ -12,6 +12,7 @@ import {
 import { generateOrderId, generatePaymentId } from '@/utils/algorithm';
 import { generateLog } from '@/utils';
 import mailService from '../config/mail';
+import { appConfig } from '@/constant/app.config';
 const prisma = new PrismaClient();
 
 const orderProcess = async (data: orderStateTypes) => {
@@ -154,7 +155,7 @@ const orderProcess = async (data: orderStateTypes) => {
         reason: 'Order Confirmation',
         greeting: `Hi`,
         bodyHtml: `<p>Thank you for your order! We've received your order <strong>${order.orderID}</strong> and it's being processed.</p>`,
-        callToActionLink: `https://flexin.shop/order/status/${order.orderID}`,
+        callToActionLink: `${appConfig.hostname.BASE_URL}/order/status/${order.orderID}`,
         callToActionText: 'View Order Status',
       },
     }).catch((error) => {
@@ -169,8 +170,9 @@ const orderProcess = async (data: orderStateTypes) => {
   }
 };
 
-const getorderDatawithOrderId = async (orderID: string) => {
+const getorderDatawithOrderId = async (orderID: string,userEmail:string) => {
   try {
+
     const order = await prisma.order.findUnique({
       where: { orderID },
       include: {
@@ -180,6 +182,14 @@ const getorderDatawithOrderId = async (orderID: string) => {
     });
     if (!order) {
       throw new AppError({ message: 'No order found', status: 404 });
+    }
+    if(!userEmail) {
+      throw new AppError({ message: 'User email is required', status: 400 });
+    }
+
+
+    if ( (!order.orderInfo || order.orderInfo.email !== userEmail)) {
+      throw new AppError({ message: 'You are not authorized to view this order', status: 403 });
     }
     return SuccessResponse({
       message: 'success',
