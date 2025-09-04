@@ -96,7 +96,7 @@ export default function BetterCheckout() {
       //success toast message
       toast.success('Successfully placed order');
       //redirect to order status page
-      router.replace('/order/status');
+      router.replace('/order/status/'+addOrder.data.orderID);
 
       //clear cart
       cartStore.clearCart();
@@ -206,7 +206,7 @@ export default function BetterCheckout() {
                   })
                 }
               />
-              <RadioRow
+              {/* <RadioRow
                 name="shipping"
                 title="Express (1–2 days)"
                 right="$7"
@@ -218,7 +218,7 @@ export default function BetterCheckout() {
                     shouldValidate: true,
                   })
                 }
-              />
+              /> */}
             </div>
           </Card>
 
