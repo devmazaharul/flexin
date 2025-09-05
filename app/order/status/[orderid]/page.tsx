@@ -146,7 +146,7 @@ export default function Page() {
 
                 {/* Badges */}
                 <div className="mb-6 flex flex-wrap md:flex-nowrap w-full items-center gap-2">
-                  <Badge tone="green">Status: {orderInfo.status}</Badge>
+                  <Badge tone={orderInfo.status=="CANCELLED"?"red":orderInfo.status=="PENDING" || orderInfo.status=="PROCESSING"?"amber":orderInfo.status=="DELIVERED"?"green":"gray"}>Status: {orderInfo.status}</Badge>
                   <Badge
                     tone={
                       orderInfo.Payments.status == 'CANCELLED' ||
