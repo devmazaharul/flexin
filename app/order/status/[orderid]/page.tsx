@@ -1,5 +1,4 @@
 'use client';
-
 import {
   CheckCircle2,
   ReceiptText,
@@ -89,7 +88,7 @@ export default function Page() {
   const userEmail = user?.email ?? '';
 
   useEffect(() => {
- if (!allParam?.orderid || !userEmail) return;
+    if (!allParam?.orderid || !userEmail) return;
     setLoading(true);
 
     const getOrderInfo = async () => {
@@ -106,13 +105,15 @@ export default function Page() {
         setLoading(false);
       }
     };
-    getOrderInfo()
-  }, [allParam?.orderid,userEmail]);
+    getOrderInfo();
+  }, [allParam?.orderid, userEmail]);
 
   if (loading)
-    return <main className="text-center py-20 text-gray-600">
-      <Loader/>
-      </main>;
+    return (
+      <main className="text-center py-20 text-gray-600">
+        <Loader />
+      </main>
+    );
 
   return (
     <>
@@ -148,9 +149,12 @@ export default function Page() {
                   <Badge tone="green">Status: {orderInfo.status}</Badge>
                   <Badge
                     tone={
-                      orderInfo.Payments.status !== 'PENDING'
-                        ? 'green'
-                        : 'amber'
+                      orderInfo.Payments.status == 'CANCELLED' ||
+                      orderInfo.Payments.status == 'FAILED'
+                        ? 'red'
+                        : orderInfo.Payments.status == 'PENDING'
+                        ? 'amber'
+                        : 'green'
                     }
                   >
                     <CreditCard className="mr-1 h-3.5 w-3.5" /> Payment:{' '}

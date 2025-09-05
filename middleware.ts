@@ -11,7 +11,6 @@ export function middleware(req: NextRequest) {
   const authPages = ['/login', '/signup', '/verify', '/reset-password'];
   const protectedPages = ['/checkout', '/success', '/account', '/order'];
 
-
   if (protectedPages.some(path => url.pathname.startsWith(path)) && !token) {
     url.pathname = '/login';
     return NextResponse.redirect(url);
