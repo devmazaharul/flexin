@@ -65,7 +65,7 @@ params: Promise<{ productid: string }>;
       <Productdetails product={findProduct.data} />
       <div className="mt-10">
         <h2 className="text-xl font-semibold mb-4">Related products</h2>
-        <SuffledProducts />
+        <SuffledProducts productid={productid}/>
       </div>
     </>
   );

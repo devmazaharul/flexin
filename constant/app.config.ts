@@ -43,5 +43,6 @@ export const appConfig = Object.freeze({
   },
   carts:{
     FEES_MIN_AMOUNT:200
-  }
+  },
+  SUFFLED_LIMIT:6
 });

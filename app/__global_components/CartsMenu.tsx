@@ -495,7 +495,7 @@ export default function CartsMenu() {
               </div>
 
               <div className="mt-3 grid gap-2">
-                <button
+                <Link href={"/account/profile"}
                   className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
                   onClick={() => {
                     setOpenUser(false);
@@ -503,9 +503,9 @@ export default function CartsMenu() {
                 >
                   <User className="w-4 h-4 text-gray-600" />
                   Profile
-                </button>
+                </Link>
 
-                <button
+                <Link href={"/account/settings"}
                   className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm"
                   onClick={() => {
                     setOpenUser(false);
@@ -513,7 +513,7 @@ export default function CartsMenu() {
                 >
                   <Settings className="w-4 h-4 text-gray-600" />
                   Settings
-                </button>
+                </Link>
 
                 <button
                   className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm text-rose-600"

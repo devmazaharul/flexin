@@ -62,7 +62,7 @@ export default function SignUpForm() {
     } 
   };
   return (
-    <div className="w-[350px] mx-auto flex items-center h-screen">
+  <div className="mt-10 w-[350px] flex items-center mx-auto">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}

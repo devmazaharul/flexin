@@ -75,7 +75,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="h-screen w-[350px] flex items-center mx-auto">
+    <div className="mt-10 w-[350px] flex items-center mx-auto">
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
