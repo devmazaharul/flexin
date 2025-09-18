@@ -36,4 +36,12 @@ const loginSchema = z.object({
 
 });
 
-export { signupSchema, loginSchema };
+
+  const changePasswordSchema=z.object({
+    oldpass:z.string().trim(),
+    newpass:z.string().trim()
+  })
+
+  
+
+export { signupSchema, loginSchema,changePasswordSchema };

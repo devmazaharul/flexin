@@ -15,10 +15,7 @@ import { prisma } from '../config/prisma';
 import { cookies } from 'next/headers';
 import { currentUserInfo } from '@/authentication/auth';
 import { selectResponse } from '@/utils/prisma';
-import { queueService } from '../queue/queue';
-import { queueJobName } from '@/types/others';
 import mailService from '../config/mail';
-import { redirect } from 'next/navigation';
 import { log } from 'next-axiom';
 import { generateLog } from '@/utils';
 
@@ -158,6 +155,7 @@ const loginUser = async (
       role: safeUser.role,
     });
 
+
     // 6. Set cookie
     const cookie = await cookies();
     cookie.set('authToken', token, {
@@ -268,7 +266,6 @@ const updateAccount = async (
   data: updateItem
 ): Promise<ReturnType<typeof SuccessResponse>> => {
   try {
-  
     const authRes = await currentUserInfo();
     if (authRes.status !== 200) {
       log.warn('Unauthorized account update attempt', { userId: authRes.data?.id });
@@ -289,7 +286,6 @@ const updateAccount = async (
     }
 
     log.info('User account updated', { userId: updateuser.id });
-
 
 
     return SuccessResponse<userItem>({
@@ -376,6 +372,11 @@ const changePassword = async (
       where: { id: user.id },
       data: { password: newHashedPassword },
     });
+    
+    //remove cookie
+
+    const cookiesList=await cookies()
+      cookiesList.delete("authToken")
 
     return SuccessResponse<{ name: string }>({
       message: 'Password has been changed',

@@ -20,6 +20,7 @@ const jwtGenarate = (payload: jwtpayload,time:string='7d') => {
 
 const jwtVerify = (token:string) => {
   try {
+
    if(jwt.decode(token) === null) {
     throw new AppError({
       message: 'Unauthorized',

@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
 
 export const currentUserInfo = async ():Promise<SuccessResponseinternal<{id:string}>> => {
   try {
-    const gettoken = (await cookies()).get('token');
+    const gettoken = (await cookies()).get('authToken');
     if (!gettoken) {
       throw new AppError({
         message: 'Unauthorized user',
@@ -19,8 +19,8 @@ export const currentUserInfo = async ():Promise<SuccessResponseinternal<{id:stri
     // Verify the token
     const verifiedToken = jwtVerify(token);
 
-    const tokenItem = verifiedToken as jwtpayload;
 
+    const tokenItem = verifiedToken as jwtpayload;
     //check token user exists in database
     const user = await prisma.user.findUnique({
       where:{id: tokenItem.id}

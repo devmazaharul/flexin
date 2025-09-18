@@ -3,7 +3,7 @@ import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { User, Mail, MapPin, Verified } from 'lucide-react';
+import { User, Mail, MapPin, Verified, User2 } from 'lucide-react';
 import Link from 'next/link';
 import { useAuthStore } from '@/hook/auth';
 
@@ -18,12 +18,10 @@ export default function ProfilePage() {
         <CardContent className="p-8 space-y-6">
           {/* Profile Header */}
           <div className="flex items-center space-x-4">
-            <div className="w-20 h-20 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 flex items-center justify-center text-white text-2xl font-bold">
-              MZ
-            </div>
+        <p className=' rounded-full p-1 border-3 border-gray-100'> <User2 size={50}/></p>
             <div>
               <h2 className="text-xl font-bold text-gray-800 capitalize">{userdata?.name || "Flexin user"}</h2>
-              <p className="text-gray-500">Ecommerce Enthusiast</p>
+              <p className="text-gray-500">flexin user</p>
             </div>
           </div>
 
@@ -57,10 +55,10 @@ export default function ProfilePage() {
 
           {/* Action Buttons */}
           <div className="flex justify-end gap-4">
-            <Button variant="outline" className='cursor-pointer '>
+            <Button variant="default" className='cursor-pointer '>
               <Link href={"/account/settings"}>Edit Profile</Link>
             </Button>
-            <Button className='cursor-pointer '>Save Changes</Button>
+           
           </div>
         </CardContent>
       </Card>
