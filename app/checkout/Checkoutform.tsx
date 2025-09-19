@@ -17,7 +17,7 @@ import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import Address from './Address';
 import { useAuthStore } from '@/hook/auth';
-import { useOrderStore } from '@/hook/order';
+
 import { useNotificationStore } from '@/hook/notification';
 import Link from 'next/link';
 
@@ -27,7 +27,7 @@ export default function BetterCheckout() {
   const router = useRouter();
   const addresses = useAddressStore((pre) => pre.totalAddress);
   const userInfo = useAuthStore((pre) => pre.user);
-  const orderStore = useOrderStore();
+
   const notificationStore = useNotificationStore();
 
   const {
@@ -91,8 +91,6 @@ export default function BetterCheckout() {
         href: `/order/status`,
       });
 
-      //set order id
-      orderStore.setOrderID(addOrder.data.orderID);
       //success toast message
       toast.success('Successfully placed order');
       //redirect to order status page

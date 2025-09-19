@@ -117,6 +117,7 @@ export default function CartsMenu() {
         if (res?.status == 200) {
           toast.success(res.message);
           authRemove();
+          useNotificationStore.getState().clearNotification()
           router.push('/login');
         }
       }
@@ -383,7 +384,52 @@ export default function CartsMenu() {
                 <div className="text-sm text-gray-500">No notifications</div>
               ) : (
                 <ul className="space-y-2 max-h-56 overflow-auto">
-                  {notifications.map((n) => (
+                  {!isLoggedIn ? notifications.filter((item)=>item.title=="Registration Successful").length==0 ? <small>No notification found</small>:notifications.filter((item)=>item.title=="Registration Successful").map((n) => (
+                    <li
+                      key={n.id}
+                      className={`flex items-start gap-3 p-2 rounded-md ${
+                        n.read ? 'bg-white' : 'bg-amber-50/70'
+                      }`}
+                    >
+                      <div className="w-9 h-9 rounded-full bg-gray-100 grid place-items-center text-xs font-semibold text-gray-600">
+                        {/* short icon / initials */}
+                        🔔
+                      </div>
+
+                      <div className="flex-1  cursor-grab">
+                        <div
+                          onClick={() => {
+                            markRead(n.id!);
+                          }}
+                        >
+                          <div className="text-sm font-medium text-gray-800 capitalize">
+                            {n.title}
+                          </div>
+                          {n.body && (
+                            <div className="text-xs text-gray-500 line-clamp-2">
+                              {n.body}
+                            </div>
+                          )}
+                        </div>
+                        <div className="text-[11px] text-gray-400 mt-1">
+                          {n.createdAt}
+                        </div>
+                      </div>
+
+                      <div className="flex items-start">
+                        {!n.read && (
+                          <button
+                            className="text-xs text-rose-600 ml-2"
+                            onClick={() => {
+                              markRead(n.id!);
+                            }}
+                          >
+                            Mark
+                          </button>
+                        )}
+                      </div>
+                    </li>
+                  )):notifications.map((n) => (
                     <li
                       key={n.id}
                       className={`flex items-start gap-3 p-2 rounded-md ${

@@ -20,6 +20,7 @@ import AppError from '@/server/responce/error';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/hook/auth';
+import { useNotificationStore } from '@/hook/notification';
 
 type LoginFormInputs = z.infer<typeof loginSchema>;
 
@@ -58,6 +59,15 @@ export default function LoginForm() {
         isVerified: items.isVerified,
       };
       loginAuth(loginActionPayload);
+
+       useNotificationStore.getState().setNotification({
+        title: "Login Successful",
+        body: `Welcome back! You have successfully logged in.`,
+        href: `/account`,
+        read: false,
+      });
+
+  
       router.push('/account');
     } catch (error: unknown) {
       if (error instanceof AppError) {

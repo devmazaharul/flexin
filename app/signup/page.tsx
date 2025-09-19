@@ -20,6 +20,7 @@ import { createUser } from '@/server/controllers/user';
 import AppError from '@/server/responce/error';
 import { toast } from 'sonner';
 import { useRouter } from 'next/navigation';
+import { useNotificationStore } from '@/hook/notification';
 
 type SignUpFormInputs = z.infer<typeof signupSchema>;
 
@@ -45,6 +46,13 @@ export default function SignUpForm() {
         });
 
       toast.success(signipAction.message);
+    useNotificationStore.getState().setNotification({
+        title: "Registration Successful",
+        body: `You have successfully registered. Welcome to FlexIn!`,
+        href: `/login`, // যেকোন relevant page
+        read: false,
+      });
+
       router.push('/login');
        form.reset();
     } catch (error: unknown) {
