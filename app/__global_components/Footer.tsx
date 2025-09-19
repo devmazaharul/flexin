@@ -1,15 +1,21 @@
-
+"use client"
 import Link from 'next/link';
 import React from 'react';
 import { FaTiktok } from "react-icons/fa";
 import { FaFacebook } from "react-icons/fa6";
 import { FaYoutube } from "react-icons/fa";
 import { FaInstagram } from "react-icons/fa6";
+import { toast } from 'sonner';
 
 
 const Footer: React.FC = () => {
+
+  const handleSubmit=(e:any)=>{
+    e.preventDefault()
+    toast.success("Thanks for subscribing")
+  }
   return (
-    <footer className="bg-gray-950 text-gray-300 py-12">
+    <footer className="bg-gray-950 text-gray-300 my-10 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         
         {/* Main Footer Content Grid */}
@@ -78,7 +84,7 @@ const Footer: React.FC = () => {
             <p className="text-sm mb-4">
               Get the latest updates, offers, and trends delivered straight to your inbox.
             </p>
-            <form className="flex w-full max-w-sm mx-auto md:mx-0">
+            <form onSubmit={handleSubmit} className="flex w-full max-w-sm mx-auto md:mx-0">
               <input
                 type="email"
                 placeholder="Your email address"

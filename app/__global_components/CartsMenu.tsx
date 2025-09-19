@@ -20,6 +20,7 @@ import {  logout } from '@/server/controllers/user';
 import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/hook/auth';
 import { useNotificationStore } from '@/hook/notification';
+import { Button } from '@/components/ui/button';
 
 
 
@@ -109,10 +110,9 @@ export default function CartsMenu() {
 
 
 
+  const [isLoggout,setIslogout]=useState(false)
   const handleLogout = async () => {
     try {
-      const conf = confirm('Are you sure?');
-      if (conf) {
         const res = await logout();
         if (res?.status == 200) {
           toast.success(res.message);
@@ -120,12 +120,20 @@ export default function CartsMenu() {
           useNotificationStore.getState().clearNotification()
           router.push('/login');
         }
-      }
+      
       setOpenUser(false);
     } catch  {
       toast.success('Eror logout');
+    }finally{
+      setIslogout(false)
     }
   };
+
+
+
+  function cancelRemove() {
+    setIslogout(false);
+  }
 
   return (
     <div className="flex items-center gap-3">
@@ -563,7 +571,7 @@ export default function CartsMenu() {
 
                 <button
                   className="flex cursor-pointer items-center gap-2 px-3 py-2 rounded-md hover:bg-gray-50 text-sm text-rose-600"
-                  onClick={handleLogout}
+                  onClick={()=>setIslogout(true)}
                 >
                   <LogOut className="w-4 h-4 text-rose-600" />
                   Logout
@@ -573,6 +581,58 @@ export default function CartsMenu() {
           )}
         </div>
       )}
+
+
+    {/* Remove confirmation modal */}
+{isLoggout && (
+  <div
+    role="dialog"
+    aria-modal="true"
+    className="fixed inset-0 z-50 grid place-items-center bg-black/40 p-4"
+    onClick={cancelRemove}
+  >
+    <div
+      className="bg-white rounded-lg max-w-sm w-full p-5"
+      onClick={(e) => e.stopPropagation()}
+    >
+      {/* Header */}
+      <div className="flex items-start justify-between">
+        <h3 className="text-lg font-semibold">Logout</h3>
+        <button
+          className="p-1 cursor-pointer"
+          onClick={cancelRemove}
+          aria-label="Close"
+        >
+          <X />
+        </button>
+      </div>
+
+      {/* Message */}
+      <p className="text-sm text-gray-600 mt-3">
+        Are you sure you want to logout from your account?
+      </p>
+
+      {/* Actions */}
+      <div className="mt-5 flex justify-end gap-2">
+        <button
+          onClick={cancelRemove}
+          className="px-3 py-1 rounded-md border cursor-pointer"
+        >
+          Cancel
+        </button>
+        <Button
+          onClick={handleLogout}
+          className="cursor-pointer"
+          variant="destructive"
+        >
+          Logout
+        </Button>
+      </div>
+    </div>
+  </div>
+)}
+
+
 
       {/* small animations CSS (put in global CSS or tailwind config as plugin) */}
       <style jsx>{`

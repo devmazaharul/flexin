@@ -70,8 +70,8 @@ export default function SettingsPage() {
       });
 
       toast.success(updateAction.message);
-    } catch (error: any) {
-      toast.error(error.message || "Failed to update profile");
+    } catch (error: unknown) {
+      toast.error((error as Error)?.message || "Failed to update profile");
     }
   };
 
@@ -90,8 +90,8 @@ export default function SettingsPage() {
       router.refresh();
       toast.success("Password changed successfully");
       resetPass();
-    } catch (error: any) {
-      toast.error(error.message || "Failed to change password");
+    } catch (error: unknown) {
+      toast.error((error as Error)?.message || "Failed to change password");
     }
   };
 
