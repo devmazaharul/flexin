@@ -3,8 +3,8 @@ import { v7 as uuidv7 } from "uuid";
 
 const bdPhoneRegex = /^(?:\+?88)?01[3-9]\d{8}$/; // BD mobile
 const postCodeRegex = /^\d{4,5}$/;              // 4–5 digits
-
-
+const EmailRegex =
+  /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[A-Za-z0-9-]+(?:\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
 
 type LogLevel = "info" | "error" | "warn" | "debug";
 
@@ -23,5 +23,6 @@ type LogLevel = "info" | "error" | "warn" | "debug";
 export {
   bdPhoneRegex,
   postCodeRegex,
-generateLog
+generateLog,
+EmailRegex
 }
