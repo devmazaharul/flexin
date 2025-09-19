@@ -69,6 +69,7 @@ export default function SearchMenu({
 
   return (
     <form onSubmit={handleSubmit} className="w-full">
+      
       <div
         className="
           group flex items-center gap-2 w-full
