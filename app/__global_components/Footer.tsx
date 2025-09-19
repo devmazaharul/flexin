@@ -10,7 +10,7 @@ import { toast } from 'sonner';
 
 const Footer: React.FC = () => {
 
-  const handleSubmit=(e:any)=>{
+  const handleSubmit=(e:React.FormEvent<HTMLFormElement>)=>{
     e.preventDefault()
     toast.success("Thanks for subscribing")
   }

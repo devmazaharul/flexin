@@ -1,6 +1,5 @@
-import { allProduct } from '@/server/controllers/product';
+
 import ProductCard from '../products/__sub/ProductCard';
-import TopInfo from '../__global_components/TopInfo';
 import TopsmallInfo from '../__global_components/TopsmallInfo';
 import { productItems } from '@/types/product';
 
