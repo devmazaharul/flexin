@@ -52,8 +52,8 @@ const Footer: React.FC = () => {
           <div className="space-y-4">
             <h4 className="text-lg font-semibold text-white">Shop</h4>
             <ul className="space-y-2 text-sm">
-              <li><Link href="#" className="hover:text-white transition-colors duration-300">Men's Apparel</Link></li>
-              <li><Link href="#" className="hover:text-white transition-colors duration-300">Women's Apparel</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors duration-300">Men&lsquo;s Apparel</Link></li>
+              <li><Link href="#" className="hover:text-white transition-colors duration-300">Women&lsquo;s Apparel</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors duration-300">New Arrivals</Link></li>
               <li><Link href="#" className="hover:text-white transition-colors duration-300">Sale</Link></li>
             </ul>
