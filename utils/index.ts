@@ -20,9 +20,40 @@ type LogLevel = "info" | "error" | "warn" | "debug";
   return logId; // চাইলে বাইরে রিটার্ন করতে পারো
 };
 
+
+ const formatPrice = (
+  value: number,
+  options?: {
+    locale?: string;
+    currency?: string;
+  }
+): string => {
+  const {
+    locale = "en-US",
+    currency = "BDT",
+  } = options || {};
+
+  try {
+    const formattedValue = new Intl.NumberFormat(locale, {
+      style: "currency",
+      currency,
+      maximumFractionDigits: 0, 
+    }).format(value);
+
+    // BDT চিহ্নের আগে স্পেস যোগ করা
+   // return formattedValue
+    return formattedValue.replace('BDT', '৳').replace('$', '৳');
+    
+  } catch (error) {
+    console.error("Error formatting price:", error);
+    return `${value} ${currency}`;
+  }
+};
+
 export {
   bdPhoneRegex,
   postCodeRegex,
 generateLog,
-EmailRegex
+EmailRegex,
+formatPrice
 }

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { appConfig } from '@/constant/app.config';
 import { useCartStore } from '@/hook/persist';
 import { productItems } from '@/types/product';
+import { formatPrice } from '@/utils';
 import { Minus, Plus, ShoppingBasket } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -82,15 +83,15 @@ export default function ProductCard({
             {discount > 0 ? (
               <>
                 <span className="text-xl font-bold text-gray-800">
-                  €{(price - (price * discount) / 100).toFixed(2)}
+                  {formatPrice((price - (price * discount) / 100))}
                 </span>
                 <span className="text-sm text-gray-500 line-through">
-                  €{price.toFixed(2)}
+                 {formatPrice(price)}
                 </span>
               </>
             ) : (
               <span className="text-xl font-bold text-gray-800">
-                €{price.toFixed(2)}
+              {formatPrice(price)}
               </span>
             )}
           </div>

@@ -20,6 +20,7 @@ import { useAuthStore } from '@/hook/auth';
 
 import { useNotificationStore } from '@/hook/notification';
 import Link from 'next/link';
+import { formatPrice } from '@/utils';
 
 export default function BetterCheckout() {
   const cartStore = useCartStore();
@@ -314,23 +315,23 @@ export default function BetterCheckout() {
                       </p>
                     </div>
                     <div className="text-sm font-medium">
-                      ${(it.price * it.quantity).toFixed(2)}
+                      {formatPrice(it.price * it.quantity)}
                     </div>
                   </li>
                 ))}
               </ul>
 
               <div className="space-y-2 text-sm">
-                <Row label="Subtotal" value={`$${subtotal.toFixed(2)}`} />
+                <Row label="Subtotal" value={`${formatPrice(subtotal)}`} />
                 <Row
                   label="Shipping"
                   value={
-                    shippingFee === 0 ? 'Free' : `$${shippingFee.toFixed(2)}`
+                    shippingFee === 0 ? 'Free' : `${formatPrice(shippingFee)}`
                   }
                 />
                 <div className="border-t border-gray-200 pt-2 font-semibold flex items-center justify-between">
                   <span>Total</span>
-                  <span className="text-lg">${total.toFixed(2)}</span>
+                  <span className="text-lg">{formatPrice(total)}</span>
                 </div>
               </div>
 

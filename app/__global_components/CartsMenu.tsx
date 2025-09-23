@@ -21,6 +21,7 @@ import { useRouter } from 'next/navigation';
 import { useAuthStore } from '@/hook/auth';
 import { useNotificationStore } from '@/hook/notification';
 import { Button } from '@/components/ui/button';
+import { formatPrice } from '@/utils';
 
 
 
@@ -206,7 +207,7 @@ export default function CartsMenu() {
                           {it.name}
                         </div>
                         <div className="text-xs text-gray-500">
-                          {it.quantity} × €{it.price?.toFixed?.(0) ?? it.price}
+                          {it.quantity} × {formatPrice(it.price)}
                         </div>
                       </div>
                     </li>
@@ -217,13 +218,13 @@ export default function CartsMenu() {
 
             <div className="mt-3 flex items-center justify-between">
               <div className="text-sm font-semibold text-gray-800">
-                Total: €
-                {cartStore.cart
+                Total:  
+                {formatPrice(cartStore.cart
                   .reduce(
                     (s: number, i) => s + (i.price || 0) * (i.quantity || 1),
                     0
-                  )
-                  .toFixed(0)}
+                  ))
+                  }
               </div>
               <div className="flex items-center gap-2">
                 <button className="text-xs px-2 py-1 rounded-md hover:bg-gray-100 cursor-pointer">

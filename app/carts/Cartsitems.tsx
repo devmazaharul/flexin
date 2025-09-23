@@ -9,6 +9,7 @@ import { useCartStore } from '@/hook/persist'; // adjust path
 import { Button } from '@/components/ui/button';
 import { addToCartitems } from '@/types/product';
 import { appConfig } from '@/constant/app.config';
+import { formatPrice } from '@/utils';
 
 export default function CartItems() {
   const cartStore = useCartStore();
@@ -23,16 +24,7 @@ export default function CartItems() {
   const [confirmRemoveId, setConfirmRemoveId] = useState<string | null>(null);
   const confirmButtonRef = useRef<HTMLButtonElement | null>(null);
 
-  // currency formatter
-  const fmt = useMemo(
-    () =>
-      new Intl.NumberFormat('en-GB', {
-        style: 'currency',
-        currency: 'EUR',
-        maximumFractionDigits: 0,
-      }),
-    []
-  );
+
 
   const subtotal = useMemo(
     () => cart.reduce((s, it) => s + (it.price || 0) * (it.quantity || 0), 0),
@@ -146,7 +138,7 @@ export default function CartItems() {
                       </span>
                     )}
                     {it.size && <span className="uppercase">{it.size}</span>}
-                    <span>{fmt.format(it.price)}</span>
+                    <span>{formatPrice(it.price)}</span>
                   </div>
 
                   {/* Quantity controls */}
@@ -192,7 +184,8 @@ export default function CartItems() {
 
                 <div className="flex flex-col items-end gap-2">
                   <div className="text-sm font-semibold">
-                    {fmt.format(it.price * it.quantity)}
+
+                     {formatPrice(it.price*it.quantity)}
                   </div>
                 </div>
               </article>
@@ -205,19 +198,19 @@ export default function CartItems() {
           <div className="mb-4">
             <div className="flex items-center justify-between">
               <div className="text-sm text-gray-600">Subtotal</div>
-              <div className="text-sm font-medium">{fmt.format(subtotal)}</div>
+              <div className="text-sm font-medium">{formatPrice(subtotal)}</div>
             </div>
 
             <div className="flex items-center justify-between mt-2 text-sm text-gray-600">
               <div>Shipping</div>
               <div>
-                {shippingEstimate === 0 ? 'Free' : fmt.format(shippingEstimate)}
+                {shippingEstimate === 0 ? 'Free' : formatPrice(shippingEstimate)}
               </div>
             </div>
 
             <div className="border-t border-gray-200/60 mt-3 pt-3 flex items-center justify-between">
               <div className="text-sm font-semibold">Total</div>
-              <div className="text-xl font-bold">{fmt.format(total)}</div>
+              <div className="text-xl font-bold">{formatPrice(total)}</div>
             </div>
           </div>
 

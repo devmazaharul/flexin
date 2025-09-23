@@ -1,11 +1,11 @@
-"use client";
+'use client';
 
-import { Lens } from "@/components/magicui/lens";
-import { Button } from "@/components/ui/button";
-import { appConfig } from "@/constant/app.config";
-import { useCartStore } from "@/hook/persist";
-import { productItems } from "@/types/product";
-import QRCode from "react-qr-code";
+import { Lens } from '@/components/magicui/lens';
+import { Button } from '@/components/ui/button';
+import { appConfig } from '@/constant/app.config';
+import { useCartStore } from '@/hook/persist';
+import { productItems } from '@/types/product';
+import QRCode from 'react-qr-code';
 import {
   Heart,
   Minus,
@@ -15,13 +15,14 @@ import {
   ShoppingBasket,
   Star,
   Truck,
-} from "lucide-react";
-import Image from "next/image";
-import React, { useState, useEffect, useMemo } from "react";
-import { toast } from "sonner";
-import useWishStore from "@/hook/useWishStore";
-import Link from "next/link";
-import { Skeleton } from "@/components/ui/skeleton";
+} from 'lucide-react';
+import Image from 'next/image';
+import React, { useState, useEffect, useMemo } from 'react';
+import { toast } from 'sonner';
+import useWishStore from '@/hook/useWishStore';
+import Link from 'next/link';
+import { Skeleton } from '@/components/ui/skeleton';
+import { formatPrice } from '@/utils';
 
 export default function Productdetails({ product }: { product: productItems }) {
   const {
@@ -51,11 +52,11 @@ export default function Productdetails({ product }: { product: productItems }) {
   );
 
   const isAvailable = stock > 0;
-  const hasColors = attributes?.some((a) => a.key === "color");
-  const hasSizes = attributes?.some((a) => a.key === "size");
+  const hasColors = attributes?.some((a) => a.key === 'color');
+  const hasSizes = attributes?.some((a) => a.key === 'size');
 
-  const [selectedColor, setSelectedColor] = useState<string>("");
-  const [selectedSize, setSelectedSize] = useState<string>("");
+  const [selectedColor, setSelectedColor] = useState<string>('');
+  const [selectedSize, setSelectedSize] = useState<string>('');
   const [qty] = useState<number>(1);
   const [imgLoaded, setImgLoaded] = useState(false);
 
@@ -68,8 +69,8 @@ export default function Productdetails({ product }: { product: productItems }) {
 
   // Default select first color/size on mount
   useEffect(() => {
-    const firstColor = attributes?.find((attr) => attr.key === "color")?.value;
-    const firstSize = attributes?.find((attr) => attr.key === "size")?.value;
+    const firstColor = attributes?.find((attr) => attr.key === 'color')?.value;
+    const firstSize = attributes?.find((attr) => attr.key === 'size')?.value;
     if (firstColor) setSelectedColor(firstColor);
     if (firstSize) setSelectedSize(firstSize);
   }, [attributes]);
@@ -79,7 +80,7 @@ export default function Productdetails({ product }: { product: productItems }) {
 
   const handleAddToCart = () => {
     if (variantMissing) {
-      toast.warning("Please select all required options (color/size).");
+      toast.warning('Please select all required options (color/size).');
       return;
     }
     cartStore.addToCart({
@@ -88,7 +89,7 @@ export default function Productdetails({ product }: { product: productItems }) {
       color: selectedColor || undefined,
       size: selectedSize || undefined,
     });
-    toast.success("Added to cart 🎉");
+    toast.success('Added to cart 🎉');
   };
 
   const handleIncrementCart = () => {
@@ -108,20 +109,21 @@ export default function Productdetails({ product }: { product: productItems }) {
         <div className="flex justify-center md:justify-start">
           <div className="rounded-2xl overflow-hidden p-4 bg-white">
             <div className="relative md:h-[480px] md:w-[480px]">
-              {!imgLoaded && <Skeleton className="absolute inset-0 rounded-xl" />}
+              {!imgLoaded && (
+                <Skeleton className="absolute inset-0 rounded-xl" />
+              )}
               <Lens lensSize={200} zoomFactor={2} duration={0.2}>
-              <Image
-  src={imageUrl || "/placeholder.png"}
-  alt={name}
-  width={480}
-  height={480}
-  className={`rounded-xl object-contain transition-transform duration-300 hover:scale-105 ${
-    imgLoaded ? "opacity-100" : "opacity-0"
-  }`}
-  priority
-  onLoadingComplete={() => setImgLoaded(true)}
-/>
-
+                <Image
+                  src={imageUrl || '/placeholder.png'}
+                  alt={name}
+                  width={480}
+                  height={480}
+                  className={`rounded-xl object-contain transition-transform duration-300 hover:scale-105 ${
+                    imgLoaded ? 'opacity-100' : 'opacity-0'
+                  }`}
+                  priority
+                  onLoadingComplete={() => setImgLoaded(true)}
+                />
               </Lens>
             </div>
           </div>
@@ -156,7 +158,7 @@ export default function Productdetails({ product }: { product: productItems }) {
               {/* Description (safe) */}
               <p className="text-gray-600 leading-relaxed">
                 {description?.slice(0, DESCRIPTION_LEN_MAX) ??
-                  "No description available."}
+                  'No description available.'}
               </p>
             </div>
 
@@ -178,10 +180,10 @@ export default function Productdetails({ product }: { product: productItems }) {
             {discount > 0 ? (
               <>
                 <span className="text-3xl font-extrabold text-gray-800">
-                  €{discountedPrice.toFixed(0)}
+                  {formatPrice(discountedPrice)}
                 </span>
                 <span className="text-lg line-through text-gray-400">
-                  €{price.toFixed(0)}
+                {formatPrice(price)}
                 </span>
                 <span className="px-2 py-0.5 bg-red-500 text-white font-medium text-sm rounded-md">
                   -{discount}%
@@ -189,7 +191,7 @@ export default function Productdetails({ product }: { product: productItems }) {
               </>
             ) : (
               <span className="text-3xl font-bold text-gray-800">
-                €{price.toFixed(0)}
+              {formatPrice(price)}
               </span>
             )}
           </div>
@@ -199,11 +201,11 @@ export default function Productdetails({ product }: { product: productItems }) {
             <span
               className={`text-xs font-medium px-2.5 py-1 rounded-md ${
                 isAvailable
-                  ? "bg-green-500/10 text-green-700"
-                  : "bg-red-100 text-red-700"
+                  ? 'bg-green-500/10 text-green-700'
+                  : 'bg-red-100 text-red-700'
               }`}
             >
-              {isAvailable ? `In Stock (${stock})` : "Out of Stock"}
+              {isAvailable ? `In Stock (${stock})` : 'Out of Stock'}
             </span>
             {isAvailable && stock <= 3 && (
               <span className="text-xs text-amber-600">
@@ -244,7 +246,7 @@ export default function Productdetails({ product }: { product: productItems }) {
 
                   <ul className="mt-2 flex flex-wrap items-center gap-2">
                     {attributes
-                      .filter((attr) => attr.key === "color")
+                      .filter((attr) => attr.key === 'color')
                       .slice(0, COLOR_LEN_MAX)
                       .map((attr, idx) => (
                         <li
@@ -259,17 +261,19 @@ export default function Productdetails({ product }: { product: productItems }) {
                             }
                           }}
                           onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ")
+                            if (e.key === 'Enter' || e.key === ' ')
                               setSelectedColor(attr.value);
                           }}
                           className={`w-7 h-7 rounded-full transition 
                             ${
-                              isAlreadyInCart?.color ? "cursor-text" : "cursor-pointer"
+                              isAlreadyInCart?.color
+                                ? 'cursor-text'
+                                : 'cursor-pointer'
                             }
                             ${
                               selectedColor === attr.value
-                                ? "outline-none ring-2 ring-offset-1 ring-gray-400"
-                                : ""
+                                ? 'outline-none ring-2 ring-offset-1 ring-gray-400'
+                                : ''
                             }`}
                           style={{ backgroundColor: attr.value }}
                           title={attr.value}
@@ -298,7 +302,7 @@ export default function Productdetails({ product }: { product: productItems }) {
 
                   <ul className="mt-2 flex flex-wrap items-center gap-2">
                     {attributes
-                      .filter((attr) => attr.key === "size")
+                      .filter((attr) => attr.key === 'size')
                       .slice(0, SIZE_LEN_MAX)
                       .map((attr, idx) => (
                         <li
@@ -313,19 +317,19 @@ export default function Productdetails({ product }: { product: productItems }) {
                           }}
                           aria-disabled={!!isAlreadyInCart?.size}
                           onKeyDown={(e) => {
-                            if (e.key === "Enter" || e.key === " ")
+                            if (e.key === 'Enter' || e.key === ' ')
                               setSelectedSize(attr.value);
                           }}
                           className={`px-3 py-1.5 rounded-md border-2 text-xs md:text-sm font-semibold uppercase transition
                             ${
                               isAlreadyInCart?.size
-                                ? "cursor-text"
-                                : "cursor-pointer hover:border-gray-400"
+                                ? 'cursor-text'
+                                : 'cursor-pointer hover:border-gray-400'
                             }
                             ${
                               selectedSize === attr.value
-                                ? "bg-gray-900 text-white border-gray-900"
-                                : "border-gray-300 text-gray-700"
+                                ? 'bg-gray-900 text-white border-gray-900'
+                                : 'border-gray-300 text-gray-700'
                             }`}
                         >
                           {attr.value}
@@ -343,7 +347,9 @@ export default function Productdetails({ product }: { product: productItems }) {
               <div>
                 <div className="flex items-center gap-2">
                   <Button
-                    disabled={isAlreadyInCart.quantity === appConfig.cartLimit.MIN}
+                    disabled={
+                      isAlreadyInCart.quantity === appConfig.cartLimit.MIN
+                    }
                     onClick={handleDecrementCart}
                     variant="secondary"
                     className="hover:bg-gray-200 cursor-pointer"
@@ -377,16 +383,22 @@ export default function Productdetails({ product }: { product: productItems }) {
                   className="flex items-center col-span-3 gap-2 cursor-pointer"
                 >
                   <ShoppingBasket className="w-5 h-5" />
-                  {variantMissing ? "Select options" : "Add to Cart"}
+                  {variantMissing ? 'Select options' : 'Add to Cart'}
                 </Button>
                 <Button
                   onClick={() => wishStore.toggle(product)}
                   variant="outline"
                   className="flex items-center col-span-1 justify-center cursor-pointer"
-                  title={isAlreadyInWish ? "Remove from wishlist" : "Save to wishlist"}
+                  title={
+                    isAlreadyInWish
+                      ? 'Remove from wishlist'
+                      : 'Save to wishlist'
+                  }
                 >
                   <Heart
-                    className={`${isAlreadyInWish ? "fill-red-500 stroke-red-500" : ""} stroke-1`}
+                    className={`${
+                      isAlreadyInWish ? 'fill-red-500 stroke-red-500' : ''
+                    } stroke-1`}
                     size={22}
                   />
                 </Button>
@@ -395,7 +407,8 @@ export default function Productdetails({ product }: { product: productItems }) {
           </div>
 
           <div className="mt-2 text-xs text-gray-600 flex items-center gap-1">
-            <Truck size={16} /> Delivery in 2–5 days • Cash on Delivery available
+            <Truck size={16} /> Delivery in 2–5 days • Cash on Delivery
+            available
           </div>
         </div>
       </div>
