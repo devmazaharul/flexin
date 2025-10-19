@@ -5,7 +5,6 @@ import { Toaster } from "sonner";
 import Header from "./__global_components/Header";
 import { appConfig } from "@/constant/app.config";
 import Footer from "./__global_components/Footer";
-
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -65,6 +64,7 @@ export default async function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+
   return (
     <html lang="en">
       <body

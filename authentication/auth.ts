@@ -8,7 +8,7 @@ import { cookies } from 'next/headers';
 
 export const currentUserInfo = async ():Promise<SuccessResponseinternal<{id:string}>> => {
   try {
-    const gettoken = (await cookies()).get('authToken');
+    const gettoken = (await cookies()).get(process.env.TOKEN_NAME || 'flexin_token' );
     if (!gettoken) {
       throw new AppError({
         message: 'Unauthorized user',

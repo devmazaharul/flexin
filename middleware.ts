@@ -2,7 +2,7 @@
 import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 
-const AUTH_COOKIE_NAME = 'authToken';
+const AUTH_COOKIE_NAME = process.env.TOKEN_NAME || 'flexin_token';
 
 export function middleware(req: NextRequest) {
   const url = req.nextUrl.clone();

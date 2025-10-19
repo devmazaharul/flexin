@@ -67,6 +67,12 @@ function imageToBase64(file:any) {
 }
 
 
+
+
+
+
+
+
 export {
   shuffleInProducts,
   imageToBase64,

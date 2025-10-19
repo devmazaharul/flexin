@@ -158,7 +158,8 @@ const loginUser = async (
 
     // 6. Set cookie
     const cookie = await cookies();
-    cookie.set('authToken', token, {
+    const token_name=process.env.TOKEN_NAME || 'flexin_token';
+    cookie.set(token_name, token, {
       httpOnly: true,
       secure: false, // 🔒 in production make this true
       sameSite: 'lax',
@@ -376,7 +377,7 @@ const changePassword = async (
     //remove cookie
 
     const cookiesList=await cookies()
-      cookiesList.delete("authToken")
+      cookiesList.delete(process.env.TOKEN_NAME || 'flexin_token');
 
     return SuccessResponse<{ name: string }>({
       message: 'Password has been changed',
@@ -393,7 +394,7 @@ const changePassword = async (
 const logout = async () => {
   try {
     const cookie = await cookies();
-    const deleteToken = cookie.delete('authToken');
+    const deleteToken = cookie.delete(process.env.TOKEN_NAME || 'flexin_token');
     if (!deleteToken)
       throw new AppError({
         message: 'Error to logout oparation',
@@ -411,7 +412,7 @@ const logout = async () => {
 const isLoggedInUser = async () => {
   try {
     const cookieObj = await cookies();
-    const hasLoggedIn = cookieObj.get('authToken');
+    const hasLoggedIn = cookieObj.get(process.env.TOKEN_NAME || 'flexin_token');
     if (!hasLoggedIn)
       throw new AppError({
         message: 'Access denied',
