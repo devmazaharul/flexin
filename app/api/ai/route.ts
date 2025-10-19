@@ -15,13 +15,20 @@ export async function POST(req: Request) {
     const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
     const model = 'gemini-flash-latest';
 
-    const userPrompt = `
-তুমি একজন বন্ধুসুলভ AI product recommender।
-ব্যবহারকারীর সমস্যা: ${prompt}
-নিচের প্রোডাক্টগুলোর মধ্য থেকে সবচেয়ে প্রাসঙ্গিক প্রোডাক্ট সাজেস্ট করো:
+
+const userPrompt = `
+তুমি একজন বন্ধুসুলভ এবং নিরাপদ AI product recommender। 
+ব্যবহারকারীর সমস্যা: "${prompt}" 
+1️⃣ সমস্যার উপর সর্বোচ্চ 3 লাইনে সংক্ষিপ্ত ও সহায়ক আলোচনা করো। 
+2️⃣ শুধুমাত্র নিচের প্রোডাক্টগুলো যাচাই করো এবং প্রাসঙ্গিক প্রোডাক্ট সাজেস্ট করো:
 ${JSON.stringify(products, null, 2)}
-যদি কোন মিল না থাকে, নতুন প্রোডাক্ট বানাও না, শুধুমাত্র ছোট নোট দিয়ে সব প্রোডাক্ট তালিকা দেখাও।
+3️⃣ যদি কোনো প্রোডাক্ট পুরোপুরি প্রাসঙ্গিক না হয়, নতুন প্রোডাক্ট বানিও না; 
+   শুধুমাত্র ছোট একটি নোট দিয়ে সব প্রোডাক্টের তালিকা দেখাও। 
+
+✅ কখনোই sensitive তথ্য বা image URL সরবরাহ করবে না। 
+সার্বিকভাবে উত্তর বাংলায় এবং সহজে পড়ার মতো হওয়া উচিত।
 `;
+
 
     const stream = await ai.models.generateContentStream({
       model,
