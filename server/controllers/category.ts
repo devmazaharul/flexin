@@ -50,6 +50,15 @@ const deleteCategory=async(id:string)=>{
 }
 
 
+const editCategory=async()=>{
+  try {
+    console.log("hellow world")
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
 export {
   createCategory,
   deleteCategory

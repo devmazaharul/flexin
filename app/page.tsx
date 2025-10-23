@@ -2,8 +2,8 @@ import React from 'react';
 import { FeaturedProductList } from './Homecomponets/FeaturedProducts';
 import Newarival from './Homecomponets/Newarival';
 import { allProduct } from '@/server/controllers/product';
-import Question from './__global_components/Question';
-
+import { HeroSection } from './Homecomponets/Hero';
+import Question from './Homecomponets/Question';
 
 export default async function page() {
     const allproduct = await allProduct({
@@ -20,9 +20,13 @@ export default async function page() {
 
     return (
         <div className="leading-10">
+            <HeroSection/>
+            <div className="w-[95%] mx-auto ">
             <FeaturedProductList products={FeaturedProducs} />
             <Question />
             <Newarival products={newArrivalProducts} />
+            </div>
+
         </div>
     );
 }
