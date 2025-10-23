@@ -1,11 +1,11 @@
 'use client';
 import React, { useRef, useState } from 'react';
-import TopInfo from './TopInfo';
 import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { motion } from 'framer-motion';
 import { Copy, Loader2, RefreshCw } from 'lucide-react';
 import { toast } from 'sonner';
+import TopInfo from '../__global_components/TopInfo';
 
 export default function Question() {
     const [prompt, setPrompt] = useState('');
@@ -67,7 +67,7 @@ export default function Question() {
         if (!result) return;
         try {
             await navigator.clipboard.writeText(result);
-            toast.success('Copied success');
+            toast.success('Copied');
         } catch {
             toast.error('Unable to copy to clipboard');
         }
