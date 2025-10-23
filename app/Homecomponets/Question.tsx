@@ -29,8 +29,8 @@ export default function Question() {
             });
 
             if (!response.body) {
-                toast.error("Response not founf")
-                return
+                toast.error('Response not founf');
+                return;
             }
 
             const reader = response.body.getReader();
@@ -56,7 +56,7 @@ export default function Question() {
                     await new Promise((res) => setTimeout(res, 15));
                 }
             }
-        } catch{
+        } catch {
             toast.error('কিছু সমস্যা হয়েছে, আবার চেষ্টা করুন।');
         } finally {
             setLoading(false);

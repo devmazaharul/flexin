@@ -4,6 +4,9 @@ import Newarival from './Homecomponets/Newarival';
 import { allProduct } from '@/server/controllers/product';
 import { HeroSection } from './Homecomponets/Hero';
 import Question from './Homecomponets/Question';
+import CategoryMarquee from './Homecomponets/Category';
+import Testimonials from './Homecomponets/Testimonials';
+import Newsletter from './Homecomponets/Newsletter';
 
 export default async function page() {
     const allproduct = await allProduct({
@@ -20,13 +23,15 @@ export default async function page() {
 
     return (
         <div className="leading-10">
-            <HeroSection/>
+            <HeroSection />
             <div className="w-[95%] mx-auto ">
-            <FeaturedProductList products={FeaturedProducs} />
-            <Question />
-            <Newarival products={newArrivalProducts} />
+                <Question />
+                <CategoryMarquee />
+                <FeaturedProductList products={FeaturedProducs} />
+                <Newarival products={newArrivalProducts} />
+                <Testimonials />
+                <Newsletter />
             </div>
-
         </div>
     );
 }
