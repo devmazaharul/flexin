@@ -36,7 +36,7 @@ const Footer: React.FC = () => {
   setemail("")
   };
   return (
-    <footer className="bg-gray-800 text-gray-300 mt-10 py-12">
+    <footer className="bg-gray-800 text-gray-300 py-12">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Main Footer Content Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 mb-10 pb-10 border-b border-gray-700">

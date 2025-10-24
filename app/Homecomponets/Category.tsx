@@ -4,12 +4,12 @@ import { Shirt, ShoppingBag, Watch, Gem, ShoppingBasket, Handbag } from 'lucide-
 import TopInfo from '../__global_components/TopInfo';
 
 const categories = [
-    { name: 'Men', icon: <Shirt className="w-10 h-10" /> },
-    { name: 'Women', icon: <ShoppingBag className="w-10 h-10" /> },
+    { name: 'Men', icon: <Shirt className="w-10 h-10 text-rose-500" /> },
+    { name: 'Women', icon: <ShoppingBag className="w-10 h-10 text-yellow-500" /> },
     { name: 'Accessories', icon: <Watch className="w-10 h-10" /> },
-    { name: 'Jewelry', icon: <Gem className="w-10 h-10" /> },
-    { name: 'Shoes', icon: <ShoppingBasket className="w-10 h-10" /> },
-    { name: 'Bags', icon: <Handbag className="w-10 h-10" /> },
+    { name: 'Jewelry', icon: <Gem className="w-10 h-10 text-purple-500" /> },
+    { name: 'Shoes', icon: <ShoppingBasket className="w-10 h-10 text-indigo-500" /> },
+    { name: 'Bags', icon: <Handbag className="w-10 h-10 text-red-500" /> },
 ];
 
 export default function CategoryMarquee() {
@@ -23,13 +23,13 @@ export default function CategoryMarquee() {
                 <motion.div
                     className="flex gap-8 items-center"
                     animate={{ x: ['-100%', '100%'] }}
-                    transition={{ repeat: Infinity, duration: 30, ease: 'easeIn' }}
+                    transition={{ repeat: Infinity, duration: 20, ease: 'easeIn' }}
                 >
                     {[...categories, ...categories].map((cat, i) => (
                         <motion.div
                             key={i}
                           
-                            className="flex flex-col items-center justify-center min-w-[160px] h-[160px] rounded-2xl  bg-gray-50 hover:bg-gray-100 border border-gray-100 shadow-2xl shadow-gray-100  text-gray-800 transition cursor-pointer"
+                            className="flex flex-col items-center justify-center min-w-[160px] h-[160px] rounded-2xl   hover:bg-gray-100/60 border border-gray-200/60 shadow-2xl shadow-gray-100  text-gray-800 transition cursor-pointer"
                         >
                             <div className="mb-3 text-gray-600">{cat.icon}</div>
                             <span className="text-base font-semibold">{cat.name}</span>

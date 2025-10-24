@@ -7,19 +7,19 @@ const testimonials = [
   {
     name: "Sarah Johnson",
     role: "Verified Buyer",
-    image: "https://randomuser.me/api/portraits/women/65.jpg",
+    image: "https://wp.sfdcdigital.com/en-us/wp-content/uploads/sites/4/2024/05/marquee-customer-service-seo.webp?w=1024",
     text: "Flexin has completely changed how I shop online. The quality and service are unmatched!",
   },
   {
     name: "Michael Lee",
     role: "Frequent Customer",
-    image: "https://randomuser.me/api/portraits/men/22.jpg",
+    image: "https://digital4africa.com/wp-content/uploads/2022/03/benefits-of-a-customer-service-charter-1024x664.jpg",
     text: "Fast delivery and amazing product quality. I always find what I’m looking for here!",
   },
   {
     name: "Amina Rahman",
     role: "Fashion Enthusiast",
-    image: "https://randomuser.me/api/portraits/women/68.jpg",
+    image: "https://www.mazaharul.site/_next/image?url=https%3A%2F%2Famimazaharul.vercel.app%2F_next%2Fimage%3Furl%3D%252Fmaza-original_processed1.jpg%26w%3D640%26q%3D75&w=256&q=75",
     text: "The user experience is so smooth and modern. Love how clean everything looks!",
   },
 ];
